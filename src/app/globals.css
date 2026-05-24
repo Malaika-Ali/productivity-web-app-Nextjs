@@ -18,6 +18,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-dashboard-background: var(--dashboard-background);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -56,6 +57,7 @@
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+  --dashboard-background: #f5f4ff;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: #7C3AED;
@@ -131,4 +133,25 @@
   html {
     @apply font-sans;
   }
+}
+
+.sidebar{
+  grid-area: sidebar;
+}
+
+.header{
+  grid-area: header;
+}
+
+.main{
+  grid-area: main;
+}
+
+.dashboard{
+  display: grid;
+  height: 100vh;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 64px 1fr;
+  grid-template-areas: 'sidebar header'
+  'sidebar main';
 }

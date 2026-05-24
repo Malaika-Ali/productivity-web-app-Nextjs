@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +53,6 @@ export default function Sidebar() {
                                     : "hover:bg-gray-50"
                             )}
                         >
-                            {/* <span><CalendarDays /></span> */}
                             <div className="flex items-center gap-2.5">                             
                                 <Icon
                                     size={18}
@@ -91,6 +91,51 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
+        
+
+              {/* Spacer */ }
+    <div className="flex-1" />
+
+    {/* Weekly Goal Card */ }
+    <div className="mx-3 mb-3 rounded-2xl p-4" style={{ background: "linear-gradient(135deg, #a855f7 0%, #ec4899 100%)" }}>
+        <p className="text-[9px] font-bold uppercase tracking-widest text-white/70 mb-1">
+            Weekly Goal
+        </p>
+        <p className="text-[18px] font-extrabold text-white leading-tight mb-3">
+            6 of 7 days
+        </p>
+        {/* Progress Bar */}
+        <div className="h-1.5 w-full rounded-full bg-white/30">
+            <div
+                className="h-1.5 rounded-full bg-white"
+                style={{ width: "85%" }}
+            />
         </div>
+    </div>
+
+    {/* User Profile */ }
+    <div className="mx-3 mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+            {/* Avatar */}
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 shrink-0">
+                <span className="text-sm font-bold text-white">M</span>
+            </div>
+            <div className="flex flex-col">
+                <span className="text-[13px] font-semibold text-gray-800 leading-tight">
+                    Maya Chen
+                </span>
+                <span className="text-[10px] text-gray-400 leading-tight">
+                    Pro · Year 1
+                </span>
+            </div>
+        </div>
+        {/* Ellipsis menu */}
+        <button className="flex flex-col items-center justify-center gap-[3px] p-1 rounded-md hover:bg-gray-100 transition-colors">
+            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
+            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
+            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
+        </button>
+    </div>
+    </div>
     );
 }
