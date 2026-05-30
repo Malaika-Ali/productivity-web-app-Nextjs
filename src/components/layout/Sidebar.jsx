@@ -1,14 +1,12 @@
 "use client"
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Flame, CalendarDays, Goal, ListChecks, Shell, ChartColumn, Sparkles } from 'lucide-react';
+import { Flame, CalendarDays, Goal, ListChecks, ChartColumn, Sparkles } from 'lucide-react';
 
 const navItems = [
     { label: "Today", active: true, icon: CalendarDays },
-    { label: "Habits", badge: "7", badgeColor: "bg-purple-500", icon: Shell },
+    { label: "Habits", badge: "7", badgeColor: "bg-purple-500", icon: Goal },
     { label: "Tasks", badge: "14", badgeColor: "bg-orange-400", icon: ListChecks },
-    { label: "Goals", icon: Goal },
     { label: "Insights", icon: ChartColumn },
     { label: "Coach", isNew: true, icon: Sparkles },
 ];
@@ -17,11 +15,11 @@ export default function Sidebar() {
     const [activeItem, setActiveItem] = useState("Today");
 
     return (
-        <div className="flex h-screen w-55 flex-col bg-white shadow-sm border-r border-gray-100">
+        <div className="flex h-screen w-55 flex-col bg-white shadow-sm border-r border-gray-100 fixed left-0">
             {/* Logo */}
             <div className="flex items-center gap-2.5 px-5 pt-6 pb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500 border-b-4 border-purple-700">
-                    <span className="text-sm font-bold text-white">H</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500 border-b-4 border-purple-700">
+                    <span className="text-lg font-bold text-white">H</span>
                 </div>
                 <span className="text-[22px] font-bold text-gray-900 tracking-tight">Habitly</span>
             </div>
@@ -130,10 +128,10 @@ export default function Sidebar() {
             </div>
         </div>
         {/* Ellipsis menu */}
-        <button className="flex flex-col items-center justify-center gap-[3px] p-1 rounded-md hover:bg-gray-100 transition-colors">
-            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
-            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
-            <span className="h-[3px] w-[3px] rounded-full bg-gray-400" />
+        <button className="flex flex-col items-center justify-center gap-0.75 p-1 rounded-md hover:bg-gray-100 transition-colors">
+            <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
+            <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
+            <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
         </button>
     </div>
     </div>

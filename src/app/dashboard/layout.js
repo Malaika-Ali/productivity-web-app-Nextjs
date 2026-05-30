@@ -9,7 +9,7 @@ const layout = ({ children }) => {
             <aside className='sidebar'>
                 <Sidebar/>
             </aside>
-                <main className='main'>
+                <main className='main bg-dashboard-background'>
                     {children}
                 </main>
             

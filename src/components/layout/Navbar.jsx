@@ -1,5 +1,6 @@
 import { Bell, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ButtonWithIcon from "../common/buttons/ButtonWithIcon";
 
 export default function Navbar() {
     const today = new Date();
@@ -10,13 +11,13 @@ export default function Navbar() {
     });
 
     return (
-        <div className="flex items-center justify-between bg-dashboard-background px-6 py-4 w-full">
+        <div className="flex items-center justify-between bg-dashboard-background px-6 py-8 w-full">
             {/* Left: Date + Greeting */}
             <div className="flex flex-col">
-                <span className="text-[12px] text-gray-400 font-medium mb-0.5">
+                <span className="text-[14px] text-gray-500 font-medium mb-0.5">
                     {dateStr}
                 </span>
-                <h1 className="text-[22px] font-extrabold text-gray-900 leading-tight tracking-tight">
+                <h1 className="text-[32px] font-extrabold text-gray-900 leading-tight tracking-tight">
                     Good morning, Maya
                 </h1>
             </div>
@@ -36,16 +37,17 @@ export default function Navbar() {
                 <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full bg-white border border-gray-200 h-9 w-9 shadow-none hover:bg-gray-50"
+                    className="rounded-xl bg-white border border-gray-300 h-11 w-11 shadow-none hover:bg-gray-50 cursor-pointer"
                 >
-                    <Bell className="h-4 w-4 text-gray-500" />
+                    <Bell className="text-gray-700" size={34} />
                 </Button>
 
                 {/* Add Button */}
-                <Button className="flex items-center gap-1.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white text-[13px] font-semibold px-4 h-9 shadow-none">
-                    <Plus className="h-4 w-4" />
+                {/* <Button className="flex items-center gap-1.5 rounded-xl bg-purple-600 border-b-4 border-purple-800 hover:bg-purple-700 text-white text-[13px] font-semibold px-4 py-5 shadow-none">
+                    <Plus className="h-4 w-4" color="white" fill="white"/>
                     Add
-                </Button>
+                </Button> */}
+                <ButtonWithIcon text="Add" Icon={Plus} />
             </div>
         </div>
     );
