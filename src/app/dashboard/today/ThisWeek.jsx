@@ -37,14 +37,14 @@ function Bar({ day, isToday }) {
                         style={{ height: BAR_HEIGHT }}
                     >
                         {/* purple portion (top ~35%) */}
-                        <div
+                        {/* <div
                             className="w-full bg-purple-500"
                             style={{ height: `${fillPercent * 60}%` }}
-                        />
+                        /> */}
                         {/* amber portion (bottom ~25%) */}
                         <div
-                            className="w-full bg-amber-400"
-                            style={{ height: `${fillPercent * 40}%` }}
+                            className="w-full bg-amber-400 rounded-t-lg"
+                            style={{ height: `${fillPercent * 60}%` }}
                         />
                     </div>
                 ) : day.state === "full" ? (
@@ -75,11 +75,12 @@ export default function ThisWeek({
     average = "5.3 / 7",
 }) {
     return (
-        <div className="bg-white rounded-3xl p-6 w-full shadow-sm border border-gray-100">
+        <div className="bg-white rounded-3xl p-6 w-full 
+        border-2 border-b-8 border-gray-200">
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-bold text-gray-900">This week</h3>
-                <span className="text-sm font-semibold text-purple-500">{dateRange}</span>
+            <div className="flex items-center justify-between mb-12">
+                <h3 className="text-base font-extrabold text-gray-900">This week</h3>
+                <span className="text-xs font-semibold bg-purple-100 px-2 py-1 rounded-full text-purple-800">{dateRange}</span>
             </div>
 
             {/* Bar chart */}

@@ -9,30 +9,30 @@ export const metadata = {
     title: "Today",
 };
 const page = () => {
-  return (
-    <div>
-        <StatsCardContainer/>
-   
-      <div className="min-h-screen bg-purple-50/50 flex items-start justify-center p-8">
+    return (
+        <div className='flex flex-col min-h-screen justify-center px-8'>
+            <StatsCardContainer />
 
-        
-          <div className="flex gap-5 w-full max-w-275 items-start">
+            <div className=" bg-purple-50/50 flex items-start justify-center flex-wrap my-6">
 
-              {/* Left column — Today's Plan */}
-              <div className="flex-[1.4] min-w-0">
-                  <TodaysPlans />
-              </div>
 
-              {/* Right column — Coach note + This week */}
-              <div className="flex-1 min-w-0 flex flex-col gap-4">
-                  <CoachNote />
-                  <ThisWeek />
-              </div>
+                <div className="flex flex-col lg:flex-row gap-5 w-full max-w-275 items-start">
 
-          </div>
-      </div>
-      </div>
-  )
+                    {/* Left column — Today's Plan */}
+                    <div className="w-full lg:flex-[1.4]">
+                        <TodaysPlans />
+                    </div>
+
+                    {/* Right column — Coach note + This week */}
+                    <div className="flex-1 flex flex-col gap-4">
+                        <CoachNote />
+                        <ThisWeek />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default page

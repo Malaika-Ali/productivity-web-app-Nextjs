@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 const FILTERS = ["All", "Habits", "Tasks"];
 
@@ -94,18 +92,18 @@ export default function TodaysPlans() {
     });
 
     return (
-        <div className="bg-white rounded-3xl p-6 w-full max-w-[680px] shadow-sm border border-gray-100">
+        <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-2 border-b-8 border-gray-200">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
-                <h2 className="text-xl font-bold text-gray-900">Today's plan</h2>
-                <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1">
+                <h2 className="text-xl font-bold text-gray-900 tracking-tighter">Today's plan</h2>
+                <div className="flex items-center gap-1  rounded-xl p-1">
                     {FILTERS.map((f) => (
                         <button
                             key={f}
                             onClick={() => setActiveFilter(f)}
-                            className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${activeFilter === f
-                                    ? "bg-white text-gray-900 shadow-sm"
-                                    : "text-gray-400 hover:text-gray-600"
+                            className={`px-4 py-1.5 rounded-lg text-[12.4px] font-bold transition-all cursor-pointer ${activeFilter === f
+                                    ? "bg-purple-50 text-purple-800 shadow-sm"
+                                    : "text-gray-500 hover:text-gray-600"
                                 }`}
                         >
                             {f}
@@ -120,7 +118,7 @@ export default function TodaysPlans() {
                     <div
                         key={task.id}
                         className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${task.active
-                                ? "border-purple-400 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)]"
+                            ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
                                 : "border-gray-100 bg-gray-50/60"
                             }`}
                     >
@@ -129,12 +127,12 @@ export default function TodaysPlans() {
                             <CheckIcon done={task.done} active={task.active} />
                             <div className="min-w-0">
                                 <p
-                                    className={`text-sm font-semibold leading-snug ${task.done ? "line-through text-gray-400" : "text-gray-800"
+                                    className={`text-sm font-bold leading-snug ${task.done ? "line-through text-gray-400" : "text-gray-800"
                                         }`}
                                 >
                                     {task.title}
                                 </p>
-                                <p className={`text-[11px] font-bold mt-0.5 tracking-wide ${task.metaColor}`}>
+                                <p className={`text-[11px] font-extrabold mt-0.5 tracking-wide ${task.metaColor}`}>
                                     {task.meta.join(" · ")}
                                 </p>
                             </div>
@@ -147,7 +145,7 @@ export default function TodaysPlans() {
                                     {task.timeBadge}
                                 </span>
                             ) : (
-                                <span className="text-sm text-gray-400 font-medium">{task.time}</span>
+                                <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.time}</span>
                             )}
                         </div>
                     </div>

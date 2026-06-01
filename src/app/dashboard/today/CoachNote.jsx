@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Brain } from 'lucide-react';
 
 export default function CoachNote({
     readTime = "2 MIN READ",
@@ -12,7 +12,7 @@ export default function CoachNote({
     onSecondary = () => { },
 }) {
     return (
-        <div className="bg-purple-600 rounded-3xl p-6 w-full text-white relative overflow-hidden">
+        <div className="bg-purple-600 rounded-3xl p-6 w-full text-white relative overflow-hidden border-2 border-b-8 border-purple-800">
             {/* Subtle background circle for depth */}
             <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-purple-500/40 pointer-events-none" />
             <div className="absolute -bottom-8 -left-4 w-32 h-32 rounded-full bg-purple-700/40 pointer-events-none" />
@@ -23,17 +23,13 @@ export default function CoachNote({
                 <div className="flex items-center gap-2.5 mb-3">
                     {/* Coach icon */}
                     <div className="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2" />
-                            <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
-                            <circle cx="12" cy="12" r="1.5" fill="white" />
-                        </svg>
+                        <Brain color='white' fill='white' />
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold tracking-widest text-purple-300 uppercase">
+                        <p className="text-[12px] font-extrabold tracking-wide text-purple-300 uppercase">
                             COACH · {readTime}
                         </p>
-                        <h3 className="text-base font-bold text-white leading-tight">{title}</h3>
+                        <h3 className="text-base font-extrabold text-white leading-tight">{title}</h3>
                     </div>
                 </div>
 
@@ -44,13 +40,13 @@ export default function CoachNote({
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onPrimary}
-                        className="bg-white text-purple-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-purple-50 transition-colors"
+                        className="bg-white text-purple-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors"
                     >
                         {primaryAction}
                     </button>
                     <button
                         onClick={onSecondary}
-                        className="bg-white text-purple-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-purple-50 transition-colors"
+                        className="bg-white/20 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors"
                     >
                         {secondaryAction}
                     </button>

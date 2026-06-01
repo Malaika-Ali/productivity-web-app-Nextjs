@@ -113,7 +113,7 @@ const cards = [
 
 export default function StatsCardContainer() {
     return (
-        <div className="flex gap-4 p-6 bg-purple-50/40 rounded-3xl flex-wrap">
+        <div className="flex gap-4 bg-purple-50/40 rounded-3xl flex-wrap">
             {cards.map((card) => (
                 <StatCard key={card.id} {...card} />
             ))}
