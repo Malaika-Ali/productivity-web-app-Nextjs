@@ -5,20 +5,17 @@ import { Button } from "@/components/ui/button";
 import SocialLoginButton from "../../../components/common/auth/SocialLoginButton";
 import OrDivider from "../../../components/common/auth/OrDivider";
 import AuthFormField from "../../../components/common/auth/AuthFormField";
+import { useForm } from "react-hook-form";
+import * as z from "zod"; 
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
 
 export default function Page() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    // TODO: wire up your auth logic here
-    console.log({ email, password });
-  }
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const onSubmit = data => console.log(data);
 
   return (
     <div className="flex-1 flex flex-col min-h-screen">
@@ -47,17 +44,16 @@ export default function Page() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             {/* Email */}
             <AuthFormField
               id="login-email"
               label="Email"
               type="email"
               placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
+              {...register("email")}
             />
 
             {/* Password */}
@@ -66,10 +62,9 @@ export default function Page() {
               label="Password"
               type={showPwd ? "text" : "password"}
               placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
+              {...register("password")}
               rightSlot={
                 <Link
                   href="/forgot-password"

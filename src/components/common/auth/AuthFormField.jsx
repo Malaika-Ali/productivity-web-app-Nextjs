@@ -14,6 +14,7 @@ export default function AuthFormField({
     rightSlot,       // optional JSX rendered to the right of the label
     inputSlot,       // optional JSX overlaid inside the input (e.g. eye toggle)
     autoComplete,
+    ...props
 }) {
     return (
         <div className="flex flex-col gap-1.5">
@@ -34,8 +35,8 @@ export default function AuthFormField({
                     id={id}
                     type={type}
                     placeholder={placeholder}
-                    value={value}
-                    onChange={onChange}
+                    // value={value}
+                    // onChange={onChange}
                     required={required}
                     autoComplete={autoComplete}
                     className={`
@@ -46,6 +47,7 @@ export default function AuthFormField({
             transition-colors
             ${inputSlot ? "pr-11" : ""}
           `}
+          {...props}
                 />
                 {/* Right-side slot inside input (e.g. eye icon) */}
                 {inputSlot && (
