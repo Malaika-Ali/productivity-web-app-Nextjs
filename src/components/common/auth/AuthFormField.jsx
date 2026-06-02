@@ -8,9 +8,6 @@ export default function AuthFormField({
     label,
     type = "text",
     placeholder = "",
-    value,
-    onChange,
-    required = false,
     rightSlot,       // optional JSX rendered to the right of the label
     inputSlot,       // optional JSX overlaid inside the input (e.g. eye toggle)
     autoComplete,
@@ -34,10 +31,7 @@ export default function AuthFormField({
                 <Input
                     id={id}
                     type={type}
-                    placeholder={placeholder}
-                    // value={value}
-                    // onChange={onChange}
-                    required={required}
+                    placeholder={placeholder}                    
                     autoComplete={autoComplete}
                     className={`
             h-12 rounded-xl border-gray-200 text-[14px] bg-white

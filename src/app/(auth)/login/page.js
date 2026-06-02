@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import SocialLoginButton from "../../../components/common/auth/SocialLoginButton";
 import OrDivider from "../../../components/common/auth/OrDivider";
 import AuthFormField from "../../../components/common/auth/AuthFormField";
+
 import { useForm } from "react-hook-form";
 import * as z from "zod"; 
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
@@ -14,7 +16,17 @@ import { EyeOff } from 'lucide-react';
 export default function Page() {
   const [showPwd, setShowPwd] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const loginSchema = z.object({
+    email: z.string()
+    .min(1, "Email is required")
+    .email("Invalid Email Address"),
+
+    password: z.string()
+    .min(1, "Password is required")
+    .min(8, "Password must be at least 8 characters"),
+  });
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({resolver: zodResolver(loginSchema),});
   const onSubmit = data => console.log(data);
 
   return (
@@ -49,12 +61,14 @@ export default function Page() {
             <AuthFormField
               id="login-email"
               label="Email"
-              type="email"
+              type="text"
               placeholder="name@example.com"
-              required
               autoComplete="email"
               {...register("email")}
             />
+            {errors.email && (
+              <p>{errors.email.message}</p>
+            )}
 
             {/* Password */}
             <AuthFormField
@@ -62,7 +76,6 @@ export default function Page() {
               label="Password"
               type={showPwd ? "text" : "password"}
               placeholder="••••••••"
-              required
               autoComplete="current-password"
               {...register("password")}
               rightSlot={
@@ -84,6 +97,11 @@ export default function Page() {
                 </button>
               }
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm">
+                {errors.password.message}
+              </p>
+            )}
 
             {/* Submit */}
             <Button

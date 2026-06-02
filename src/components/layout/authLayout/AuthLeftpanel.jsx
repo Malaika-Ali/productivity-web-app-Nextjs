@@ -40,14 +40,14 @@ export default function AuthLeftPanel() {
                 </div>
 
                 {/* Testimonial card pinned near the bottom */}
-                <div className="mb-10">
+                {/* <div className="mb-10">
                     <TestimonialCard
                         stars={5}
                         quote="I've tried every productivity app. This one actually changed my behavior."
                         author="Sarah K."
                         avatarInitial="S"
                     />
-                </div>
+                </div> */}
 
             </div>
         </aside>
