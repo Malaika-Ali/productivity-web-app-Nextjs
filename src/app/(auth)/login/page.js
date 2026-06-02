@@ -2,9 +2,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import SocialLoginButton from "../../../components/common/auth/SocialLoginButton";
-import OrDivider from "../../../components/common/auth/OrDivider";
-import AuthFormField from "../../../components/common/auth/AuthFormField";
+import SocialLoginButton from "@/components/common/auth/SocialLoginButton";
+import OrDivider from "@/components/common/auth/OrDivider";
+import AuthFormField from "@/components/common/auth/AuthFormField";
 
 import { useForm } from "react-hook-form";
 import * as z from "zod"; 
@@ -64,10 +64,11 @@ export default function Page() {
               type="text"
               placeholder="name@example.com"
               autoComplete="email"
+              error={errors.email}
               {...register("email")}
             />
             {errors.email && (
-              <p>{errors.email.message}</p>
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
 
             {/* Password */}
@@ -77,6 +78,7 @@ export default function Page() {
               type={showPwd ? "text" : "password"}
               placeholder="••••••••"
               autoComplete="current-password"
+              error={errors.password}
               {...register("password")}
               rightSlot={
                 <Link

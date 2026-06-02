@@ -11,6 +11,7 @@ export default function AuthFormField({
     rightSlot,       // optional JSX rendered to the right of the label
     inputSlot,       // optional JSX overlaid inside the input (e.g. eye toggle)
     autoComplete,
+    error,
     ...props
 }) {
     return (
@@ -36,9 +37,13 @@ export default function AuthFormField({
                     className={`
             h-12 rounded-xl border-gray-200 text-[14px] bg-white
             placeholder:text-gray-400
-            focus-visible:ring-2 focus-visible:ring-purple-500/30
-            focus-visible:border-purple-500
-            transition-colors
+            focus-visible:ring-2 
+            
+            transition-colors duration-200 ease-in-out
+              ${error
+                            ? "border-red-500 focus-visible:ring-red-500/20 focus-visible:border-red-500"
+                            : "border-gray-200 focus-visible:ring-purple-500/30 focus-visible:border-purple-500"
+                        }
             ${inputSlot ? "pr-11" : ""}
           `}
           {...props}
