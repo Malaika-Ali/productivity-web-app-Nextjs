@@ -21,7 +21,7 @@ export default function Sidebar() {
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500 border-b-4 border-purple-700">
                     <span className="text-lg font-bold text-white">H</span>
                 </div>
-                <span className="text-[22px] font-bold text-gray-900 tracking-tight">Habitly</span>
+                <span className="text-[22px] font-bold text-gray-900 tracking-tight">Habitrea AI</span>
             </div>
 
             {/* Day Streak Card */}

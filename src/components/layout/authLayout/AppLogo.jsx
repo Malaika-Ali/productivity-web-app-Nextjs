@@ -12,7 +12,7 @@ export default function AppLogo({ name = "[APP NAME]" }) {
                     />
                 </svg>
             </div>
-            <span className="text-white font-bold text-[15px] tracking-wide">{name}</span>
+            <span className="text-white font-extrabold text-[18px] tracking-wide">{name}</span>
         </div>
     );
 }

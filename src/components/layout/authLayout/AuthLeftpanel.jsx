@@ -27,10 +27,10 @@ export default function AuthLeftPanel() {
             <div className="relative z-10 flex flex-col h-full px-12 py-10">
 
                 {/* Logo */}
-                <AppLogo name="[APP NAME]" />
+                <AppLogo name="HabitRaah" />
 
                 {/* Hero headline */}
-                <div className="mt-auto mb-12">
+                <div className="mt-auto mb-auto">
                     <h1 className="text-white font-black text-[46px] leading-[1.08] tracking-tight mb-10">
                         Build habits.<br />
                         Finish tasks.<br />

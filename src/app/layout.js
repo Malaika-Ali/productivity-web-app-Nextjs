@@ -19,8 +19,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata = {
 title: {
-  template: "%s | Habitly",
-  default: "habitly"
+  template: "%s | Habitrea AI",
+  default: "Habitrea AI"
 }
 };
 
