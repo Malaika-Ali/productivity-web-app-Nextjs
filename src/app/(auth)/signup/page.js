@@ -7,35 +7,59 @@ import OrDivider from "@/components/common/auth/OrDivider";
 import AuthFormField from "@/components/common/auth/AuthFormField";
 
 import { useForm } from "react-hook-form";
-import * as z from "zod"; 
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { supabase } from "@/lib/supabase/supabaseClient";
+import { toast } from "sonner"
 
 export default function Page() {
     const [showPwd, setShowPwd] = useState(false);
 
-     const signupSchema = z.object({
+    const signupSchema = z.object({
         fullname: z.string()
-        .min(1, "Full Name is required")
-        .regex(
-                 /^[A-Za-z\s]+$/,
-                 "Full Name can only contain alphabets"
-             ),
+            .min(1, "Full Name is required")
+            .regex(
+                /^[A-Za-z\s]+$/,
+                "Full Name can only contain alphabets"
+            ),
 
         email: z.string()
-        .min(1, "Email is required")
-        .email("Invalid Email Address"),
-    
+            .min(1, "Email is required")
+            .email("Invalid Email Address"),
+
         password: z.string()
-        .min(1, "Password is required")
-        .min(8, "Password must be at least 8 characters"),
-      });
-    
-      const { register, handleSubmit, watch, formState: { errors } } = useForm({resolver: zodResolver(signupSchema),});
-      const onSubmit = data => console.log(data);
-    
+            .min(1, "Password is required")
+            .min(8, "Password must be at least 8 characters"),
+    });
+
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({ resolver: zodResolver(signupSchema), });
+
+    const onSubmit = async (data) => {
+     try {
+           const { data: result, error } = await supabase.auth.signUp({
+               email: data.email,
+               password: data.password,
+               options: {
+                   data: {
+                       full_name: data.fullname,
+                   },
+               },
+           });
+   
+           if (error) {
+               console.error('Signup error:', error.message)
+               return
+           }
+           console.log('User and profile created!');
+           toast.success("User has been created")
+     } catch (error) {
+        console.log("signup failed: ", error.message)
+         toast.error(`Signup Failed: ${error.message}`)
+     }
+    }
 
     return (
         <div className="flex-1 flex flex-col min-h-screen">
@@ -134,7 +158,7 @@ export default function Page() {
                         {/* Submit */}
                         <Button
                             type="submit"
-                            className="w-full h-12 rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide shadow-md shadow-purple-200 transition-all mt-1"
+                            className="w-full h-12 rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide shadow-md shadow-purple-200 transition-all mt-1 cursor-pointer"
                         >
                             Sign up free
                         </Button>

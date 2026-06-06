@@ -27,7 +27,7 @@ export default function AuthLeftPanel() {
             <div className="relative z-10 flex flex-col h-full px-12 py-10">
 
                 {/* Logo */}
-                <AppLogo name="HabitRaah" />
+                <AppLogo name="Habitrea AI" />
 
                 {/* Hero headline */}
                 <div className="mt-auto mb-auto">
