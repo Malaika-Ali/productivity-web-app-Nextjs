@@ -15,21 +15,58 @@ const GOALS = [
     { id: "custom", label: "✏️ Custom..." },
 ];
 
-export default function StepOne({ onComplete }) {
+export default function StepOne({ onComplete, userName, onHabitsGenerated }) {
     const [selectedGoals, setSelectedGoals] = useState([]);
     const [customText, setCustomText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('')
 
-    const toggleGoal = (id) => {
+    const canSubmit = selectedGoals.length > 0 || customText.trim().length > 0
+
+    const toggleGoal = (label) => {
         setSelectedGoals((prev) =>
-            prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]
+            prev.includes(label) ? prev.filter((g) => g !== label) : [...prev, label]
         );
     };
 
-    const handleGenerate = () => {
-        setLoading(true);
-        setTimeout(() => setLoading(false), 2000);
-        onComplete();
+    function buildGoalsString() {
+        const parts = []
+        if (selectedGoals.length > 0) {
+            parts.push(selectedGoals.join(', '))
+        }
+        if (customText.trim()) {
+            parts.push(customText.trim())
+        }
+        return parts.join('. ')
+    }
+
+    const handleGenerate = async() => {
+        // setLoading(true);
+        // setTimeout(() => setLoading(false), 2000);
+        // onComplete();
+        if (!canSubmit) return
+        setLoading(true)
+        setError('Define your goals to continue')
+
+        try {
+            const goals = buildGoalsString()
+            const res = await fetch('/api/ai/suggest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goals, userName })
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) throw new Error(data.error)
+            // Pass habits up to parent — parent switches to step 2
+            onHabitsGenerated(data.habits)
+            onComplete()
+        } catch (err) {
+            setError('Something went wrong. Please try again.', err)
+        } finally {
+            setLoading(false)
+        }
     };
 
     return (
@@ -120,11 +157,11 @@ export default function StepOne({ onComplete }) {
                             </p>
                             <div className="flex flex-wrap gap-2.5">
                                 {GOALS.map((goal) => {
-                                    const active = selectedGoals.includes(goal.id);
+                                    const active = selectedGoals.includes(goal.label);
                                     return (
                                         <button
                                             key={goal.id}
-                                            onClick={() => toggleGoal(goal.id)}
+                                            onClick={() => toggleGoal(goal.label)}
                                             className={cn(
                                                 "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer select-none",
                                                 active

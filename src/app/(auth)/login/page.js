@@ -12,9 +12,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { supabase } from "@/lib/supabase/supabaseClient";
+import { toast } from "sonner"
 
 export default function Page() {
   const [showPwd, setShowPwd] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const loginSchema = z.object({
     email: z.string()
@@ -27,7 +30,27 @@ export default function Page() {
   });
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({resolver: zodResolver(loginSchema),});
-  const onSubmit = data => console.log(data);
+  const onSubmit = async(data) => {
+    try {
+      setIsLoading(true)
+      const { data: result, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+      if (error) {
+        throw error;
+      }
+      console.log('User has successfully Logged In');
+      toast.success("Successfully Logged In")
+      console.log("session ifo:", supabase.auth.getSession())
+    } catch (error) {
+      console.log("Login failed: ", error.message)
+      toast.error(`login Failed: ${error.message}`)
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  
 
   return (
     <div className="flex-1 flex flex-col min-h-screen">

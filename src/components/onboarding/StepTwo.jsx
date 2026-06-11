@@ -11,7 +11,7 @@ const HABITS = [
     { id: "hydrate", emoji: "💧", label: "Hydrate 2L", frequency: "Daily" },
 ];
 
-export default function StepTwo() {
+export default function StepTwo({ habits, userId, userName }) {
     const [selected, setSelected] = useState([]);
 
     const toggle = (id) => {
@@ -21,6 +21,7 @@ export default function StepTwo() {
     };
 
     const allSelected = selected.length === HABITS.length;
+    console.log(habits)
 
     return (
         <div

@@ -12,11 +12,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase/supabaseClient";
 import { toast } from "sonner"
 
 export default function Page() {
     const [showPwd, setShowPwd] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const signupSchema = z.object({
         fullname: z.string()
@@ -38,27 +40,28 @@ export default function Page() {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({ resolver: zodResolver(signupSchema), });
 
     const onSubmit = async (data) => {
-     try {
-           const { data: result, error } = await supabase.auth.signUp({
-               email: data.email,
-               password: data.password,
-               options: {
-                   data: {
-                       full_name: data.fullname,
-                   },
-               },
-           });
-   
-           if (error) {
-               console.error('Signup error:', error.message)
-               return
-           }
-           console.log('User and profile created!');
-           toast.success("User has been created")
-     } catch (error) {
-        console.log("signup failed: ", error.message)
-         toast.error(`Signup Failed: ${error.message}`)
-     }
+        try {
+            setIsLoading(true)
+            const { data: result, error } = await supabase.auth.signUp({
+                email: data.email,
+                password: data.password,
+                options: {
+                    data: {
+                        full_name: data.fullname,
+                    },
+                },
+            });
+            if (error) {
+                throw error;
+            }
+            console.log('User and profile created!');
+            toast.success("User has been created")
+        } catch (error) {
+            console.log("signup failed: ", error.message)
+            toast.error(`Signup Failed: ${error.message}`)
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -157,10 +160,18 @@ export default function Page() {
 
                         {/* Submit */}
                         <Button
+                            disabled={isLoading}
                             type="submit"
                             className="w-full h-12 rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide shadow-md shadow-purple-200 transition-all mt-1 cursor-pointer"
                         >
-                            Sign up free
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    Creating Account...
+                                </>
+                            ) : (
+                                "Sign up free"
+                            )}
                         </Button>
                     </form>
 
