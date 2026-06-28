@@ -2,27 +2,52 @@
 import { useState } from "react";
 import { Bot, Zap, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; 
+import { useRouter } from 'next/navigation'
 
-const HABITS = [
-    { id: "workout", emoji: "💪", label: "Workout 30 mins", frequency: "Daily" },
-    { id: "meditate", emoji: "🧘🏽", label: "Morning Meditate", frequency: "Daily" },
-    { id: "read", emoji: "📚", label: "Read 10 Pages", frequency: "Daily" },
-    { id: "hydrate", emoji: "💧", label: "Hydrate 2L", frequency: "Daily" },
-];
+const categoryColors = {
+    health: "bg-green-500/20 text-green-400",
+    learning: "bg-blue-500/20 text-blue-400",
+    productivity: "bg-purple-500/20 text-purple-400",
+    mindfulness: "bg-yellow-500/20 text-yellow-400",
+    lifestyle: "bg-pink-500/20 text-pink-400",
+}
 
 export default function StepTwo({ habits, userId, userName }) {
+    const router = useRouter()
     const [selected, setSelected] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
 
-    const toggle = (id) => {
+    const toggle = (title) => {
         setSelected((prev) =>
-            prev.includes(id) ? prev.filter((h) => h !== id) : [...prev, id]
+            prev.includes(title) ? prev.filter((h) => h !== title) : [...prev, title]
         );
     };
 
-    const allSelected = selected.length === HABITS.length;
-    console.log(habits)
+    const allSelected = selected.length === habits.length;
+    console.log("habits as passed from step one :", JSON.stringify(habits, null, 2))
 
+    const handleClick = async () => {
+        if (selected.length === 0) return
+        setIsLoading(true)
+       try {
+           const selectedHabits = habits.filter(h => selected.includes(h.title))
+         const res = await fetch('/api/habits/bulk', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ habits: selectedHabits })
+         })
+ 
+         const data = await res.json()
+         if (!res.ok) throw new Error(data.error)
+ 
+         // Redirect to dashboard
+         router.push('/dashboard')
+       } catch (error) {
+           console.error('Error saving habits:', error)
+           setIsLoading(false)
+       }
+    }
     return (
         <div
             className="min-h-screen w-full flex items-center justify-center px-4 py-12"
@@ -35,11 +60,11 @@ export default function StepTwo({ habits, userId, userName }) {
             {/* Ambient glow */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
                 <div
-                    className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
+                    className="absolute -top-32 -left-32 w-125 h-125 rounded-full opacity-20 blur-3xl"
                     style={{ background: "radial-gradient(circle, #6d5aff, transparent)" }}
                 />
                 <div
-                    className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl"
+                    className="absolute bottom-0 right-0 w-100 h-100 rounded-full opacity-15 blur-3xl"
                     style={{ background: "radial-gradient(circle, #a855f7, transparent)" }}
                 />
             </div>
@@ -84,14 +109,14 @@ export default function StepTwo({ habits, userId, userName }) {
                                 <Bot className="w-5 h-5 text-white" strokeWidth={2} />
                             </div>
                             <div
-                                className="rounded-2xl rounded-tl-sm px-5 py-4 text-sm leading-relaxed text-white/85 border border-white/10"
+                                className="rounded-2xl rounded-tl-sm px-5 py-4 text-md leading-relaxed text-white/85 border border-white/10"
                                 style={{
                                     background:
                                         "linear-gradient(135deg, rgba(109,90,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
                                 }}
                             >
                                 Here&apos;s your starter habit plan,{" "}
-                                <span className="font-bold text-violet-300">Ali</span>{" "}
+                                <span className="font-bold text-violet-400 capitalize">{userName}</span>{" "}
                                 <span role="img" aria-label="target">🎯</span>{" "}
                                 I picked these based on your goals. Select the ones you want to start with — you can always add more later.
                             </div>
@@ -99,12 +124,12 @@ export default function StepTwo({ habits, userId, userName }) {
 
                         {/* Habit grid */}
                         <div className="grid grid-cols-2 gap-3">
-                            {HABITS.map((habit) => {
-                                const active = selected.includes(habit.id);
+                            {habits.map((habit, index) => {
+                                const active = selected.includes(habit.title);
                                 return (
                                     <button
-                                        key={habit.id}
-                                        onClick={() => toggle(habit.id)}
+                                        key={index}
+                                        onClick={() => toggle(habit.title)}
                                         className={cn(
                                             "relative text-left rounded-2xl px-4 pt-4 pb-4 border transition-all duration-200 cursor-pointer group",
                                             active
@@ -125,27 +150,32 @@ export default function StepTwo({ habits, userId, userName }) {
                                         </div>
 
                                         {/* Emoji */}
-                                        <div className="text-3xl mb-2 leading-none">{habit.emoji}</div>
+                                        {/* <div className="text-3xl mb-2 leading-none">{habit.emoji}</div> */}
 
                                         {/* Label */}
                                         <p className={cn(
                                             "text-sm font-semibold mb-2 transition-colors",
                                             active ? "text-white" : "text-white/75"
                                         )}>
-                                            {habit.label}
+                                            {habit.title}
                                         </p>
+                                        {/* Badges row */}<div className="flex gap-2 flex-wrap">
+                                            {/* Frequency badge */}
+                                            <span
+                                                className={cn(
+                                                    "inline-block text-xs px-2.5 py-0.5 rounded-full border font-medium transition-all",
+                                                    active
+                                                        ? "bg-violet-500/25 border-violet-400/40 text-violet-300"
+                                                        : "bg-white/5 border-white/15 text-white/40"
+                                                )}
+                                            >
+                                                {habit.frequency}
+                                            </span>
 
-                                        {/* Frequency badge */}
-                                        <span
-                                            className={cn(
-                                                "inline-block text-xs px-2.5 py-0.5 rounded-full border font-medium transition-all",
-                                                active
-                                                    ? "bg-violet-500/25 border-violet-400/40 text-violet-300"
-                                                    : "bg-white/5 border-white/15 text-white/40"
-                                            )}
-                                        >
-                                            {habit.frequency}
-                                        </span>
+                                            <span className={`text-xs px-2.5 py-1 rounded-full ${categoryColors[habit.category]}`}>
+                                                {habit.category}
+                                            </span>
+                                        </div>
                                     </button>
                                 );
                             })}
@@ -181,6 +211,7 @@ export default function StepTwo({ habits, userId, userName }) {
                     {/* CTA */}
                     <Button
                         disabled={selected.length === 0}
+                        onClick={handleClick}
                         className={cn(
                             "w-full h-14 rounded-2xl text-base font-semibold tracking-wide border-0",
                             "transition-all duration-300",

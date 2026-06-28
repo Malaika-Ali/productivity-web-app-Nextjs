@@ -22,7 +22,6 @@ export async function createClient() {
         }
     )
 
-    // 🔥 THIS LINE IS WHAT FIXES YOUR ISSUE
     await supabase.auth.getUser()
 
     return res

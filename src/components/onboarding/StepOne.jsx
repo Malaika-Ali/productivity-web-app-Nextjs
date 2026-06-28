@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Bot, ArrowRight, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,7 +14,7 @@ const GOALS = [
     { id: "custom", label: "✏️ Custom..." },
 ];
 
-export default function StepOne({ onComplete, userName, onHabitsGenerated }) {
+export default function StepOne({ userName, onHabitsGenerated }) {
     const [selectedGoals, setSelectedGoals] = useState([]);
     const [customText, setCustomText] = useState("");
     const [loading, setLoading] = useState(false);
@@ -41,13 +40,9 @@ export default function StepOne({ onComplete, userName, onHabitsGenerated }) {
     }
 
     const handleGenerate = async() => {
-        // setLoading(true);
-        // setTimeout(() => setLoading(false), 2000);
-        // onComplete();
         if (!canSubmit) return
         setLoading(true)
         setError('Define your goals to continue')
-
         try {
             const goals = buildGoalsString()
             const res = await fetch('/api/ai/suggest', {
@@ -61,7 +56,6 @@ export default function StepOne({ onComplete, userName, onHabitsGenerated }) {
             if (!res.ok) throw new Error(data.error)
             // Pass habits up to parent — parent switches to step 2
             onHabitsGenerated(data.habits)
-            onComplete()
         } catch (err) {
             setError('Something went wrong. Please try again.', err)
         } finally {
@@ -131,13 +125,13 @@ export default function StepOne({ onComplete, userName, onHabitsGenerated }) {
                                 <Bot className="w-5 h-5 text-white" strokeWidth={2} />
                             </div>
                             <div
-                                className="rounded-2xl rounded-tl-sm px-5 py-4 text-sm leading-relaxed text-white/90 border border-white/10"
+                                className="rounded-2xl rounded-tl-sm px-5 py-4 leading-relaxed text-white/90 border border-white/10 text-md"
                                 style={{
                                     background:
                                         "linear-gradient(135deg, rgba(109,90,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
                                 }}
                             >
-                                Hey Ali!{" "}
+                                Hey {" "} <span className="capitalize text-violet-400 font-bold">{userName}</span>!{" "}
                                 <span role="img" aria-label="wave">
                                     👋
                                 </span>{" "}

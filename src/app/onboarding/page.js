@@ -48,7 +48,7 @@ const page = () => {
   // Called by StepOne when Gemini returns habits
   function handleHabitsGenerated(generatedHabits) {
     setHabits(generatedHabits)  // store habits in parent
-    // setStep(2)                   // move to step 2
+    setStep(2)                   // move to step 2
   }
 
   // if (loading) return <div>Loading...</div>
@@ -58,7 +58,7 @@ const page = () => {
     <>
       {step === 1 && <StepOne userName={userName}
         onHabitsGenerated={handleHabitsGenerated}
-        onComplete={() => setStep(2)} />}
+       />}
       {step === 2 && <StepTwo habits={habits}
         userId={userId}
         userName={userName} />}

@@ -1,9 +1,7 @@
-// src/app/api/ai/suggest/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { buildPrompt } from '@/lib/ai/ai'
+import { buildPrompt } from '@/lib/ai/prompt'
 import { createClient } from '@/lib/supabase/supabaseServer'
 
-console.log("entered")
 export async function POST(req) {
     try {
         // 1. Get user session
@@ -60,9 +58,6 @@ async function generateHabitSuggestions(
         })
     })
 
-    console.log('API Key exists:', !!process.env.GEMINI_API_KEY)
-    console.log('API Key value:', process.env.GEMINI_API_KEY)
-
     const data = await response.json()
     console.log("GEMINI FULL RESPONSE:", JSON.stringify(data, null, 2))
     let text = data?.candidates?.[0]?.content?.parts?.[0]?.text
@@ -86,4 +81,5 @@ async function generateHabitSuggestions(
 
     // const parsed = JSON.parse(clean)
     // return parsed.habits
+    return parsed.habits
 }
