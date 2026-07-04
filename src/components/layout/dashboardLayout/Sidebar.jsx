@@ -5,8 +5,8 @@ import { Flame, CalendarDays, Goal, ListChecks, ChartColumn, Sparkles } from 'lu
 
 const navItems = [
     { label: "Today", active: true, icon: CalendarDays },
-    { label: "Habits", badge: "7", badgeColor: "bg-purple-500", icon: Goal },
-    { label: "Tasks", badge: "14", badgeColor: "bg-orange-400", icon: ListChecks },
+    { label: "Habits", icon: Goal },
+    { label: "Tasks",  icon: ListChecks },
     { label: "Insights", icon: ChartColumn },
     { label: "Coach", isNew: true, icon: Sparkles },
 ];
@@ -15,7 +15,7 @@ export default function Sidebar() {
     const [activeItem, setActiveItem] = useState("Today");
 
     return (
-        <div className="flex h-screen w-55 flex-col bg-white shadow-sm border-r border-gray-100 fixed left-0">
+        <div className="flex h-screen w-55 flex-col bg-sidebar-background shadow-sm border-r border-white/5 fixed left-0">
             {/* Logo */}
             <div className="flex items-center gap-2.5 px-5 pt-6 pb-5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500 border-b-4 border-purple-700">
@@ -67,24 +67,7 @@ export default function Sidebar() {
                                 >
                                     {item.label}
                                 </span>
-                            </div>
-
-                            {/* Badge or NEW tag */}
-                            {item.badge && (
-                                <span
-                                    className={cn(
-                                        "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white",
-                                        item.badgeColor
-                                    )}
-                                >
-                                    {item.badge}
-                                </span>
-                            )}
-                            {item.isNew && (
-                                <span className="rounded-full bg-orange-400 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white">
-                                    NEW
-                                </span>
-                            )}
+                            </div>                    
                         </button>
                     );
                 })}
@@ -93,23 +76,6 @@ export default function Sidebar() {
 
               {/* Spacer */ }
     <div className="flex-1" />
-
-    {/* Weekly Goal Card */ }
-    <div className="mx-3 mb-3 rounded-2xl p-4" style={{ background: "linear-gradient(135deg, #a855f7 0%, #ec4899 100%)" }}>
-        <p className="text-[9px] font-bold uppercase tracking-widest text-white/70 mb-1">
-            Weekly Goal
-        </p>
-        <p className="text-[18px] font-extrabold text-white leading-tight mb-3">
-            6 of 7 days
-        </p>
-        {/* Progress Bar */}
-        <div className="h-1.5 w-full rounded-full bg-white/30">
-            <div
-                className="h-1.5 rounded-full bg-white"
-                style={{ width: "85%" }}
-            />
-        </div>
-    </div>
 
     {/* User Profile */ }
     <div className="mx-3 mb-4 flex items-center justify-between">

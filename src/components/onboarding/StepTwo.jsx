@@ -42,7 +42,7 @@ export default function StepTwo({ habits, userId, userName }) {
          if (!res.ok) throw new Error(data.error)
  
          // Redirect to dashboard
-         router.push('/dashboard')
+         router.push('/dashboard/today')
        } catch (error) {
            console.error('Error saving habits:', error)
            setIsLoading(false)

@@ -17,6 +17,7 @@
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-background: var(--sidebar-background);
   --color-sidebar: var(--sidebar);
   --color-dashboard-background: var(--dashboard-background);
   --color-chart-5: var(--chart-5);
@@ -55,9 +56,16 @@
   --amber-color: #F59E0B;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #161628;
   --card-foreground: oklch(0.145 0 0);
   --dashboard-background: #f5f4ff;
+  /* dashboard bg as suggested by claude design prompt */
+  /* --dashboard-background: ##f0f0ff; */
+  
+  /* --dashboard-background: #0d0d1a; */
+  /* --dashboard-background: #080810; */
+  --sidebar-background: #fffff;
+  /* --sidebar-background: #0f0f1e; */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: #7C3AED;

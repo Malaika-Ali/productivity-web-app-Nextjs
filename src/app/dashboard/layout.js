@@ -1,5 +1,5 @@
-import Navbar from '@/components/layout/Navbar'
-import Sidebar from '@/components/layout/Sidebar'
+import Navbar from '@/components/layout/dashboardLayout/Navbar'
+import Sidebar from '@/components/layout/dashboardLayout/Sidebar'
 import React from 'react'
 
 const layout = ({ children }) => {
@@ -7,12 +7,12 @@ const layout = ({ children }) => {
         <div className="dashboard">
             <header className='header'> <Navbar /></header>
             <aside className='sidebar'>
-                <Sidebar/>
+                <Sidebar />
             </aside>
-                <main className='main bg-dashboard-background'>
-                    {children}
-                </main>
-            
+            <main className='main bg-dashboard-background/98'>
+                {children}
+            </main>
+
         </div>
     )
 }
