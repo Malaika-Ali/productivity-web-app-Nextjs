@@ -1,18 +1,21 @@
 "use client"
 import { useState } from "react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from "@/lib/utils";
 import { Flame, CalendarDays, Goal, ListChecks, ChartColumn, Sparkles } from 'lucide-react';
 
 const navItems = [
-    { label: "Today", active: true, icon: CalendarDays },
-    { label: "Habits", icon: Goal },
-    { label: "Tasks",  icon: ListChecks },
-    { label: "Insights", icon: ChartColumn },
-    { label: "Coach", isNew: true, icon: Sparkles },
+    { label: "Today", icon: CalendarDays, href: '/dashboard/today' },
+    { label: "Habits", icon: Goal, href: '/dashboard/habits' },
+{ label: "Tasks",  icon: ListChecks, href: '/dashboard/tasks' },
+    { label: "Insights", icon: ChartColumn, href: '/dashboard/insights' },
+    { label: "Coach",  icon: Sparkles , href: '/dashboard/coach'},
 ];
 
 export default function Sidebar() {
-    const [activeItem, setActiveItem] = useState("Today");
+    // const [isActive, setIsActive] = useState("/dashboard/today");
+    const pathname = usePathname();
 
     return (
         <div className="flex h-screen w-55 flex-col bg-sidebar-background shadow-sm border-r border-white/5 fixed left-0">
@@ -38,12 +41,13 @@ export default function Sidebar() {
             {/* Nav Items */}
             <nav className="flex flex-col gap-0.5 px-2">
                 {navItems.map((item) => {
-                    const isActive = activeItem === item.label;
+                    const isActive = pathname === item.href;
                     const Icon = item.icon;
                     return (
-                        <button
+                        <Link
                             key={item.label}
-                            onClick={() => setActiveItem(item.label)}
+                            href={item.href}
+                            // onClick={() => setActiveItem(item.label)}
                             className={cn(
                                 "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-all duration-150 cursor-pointer",
                                 isActive
@@ -68,7 +72,7 @@ export default function Sidebar() {
                                     {item.label}
                                 </span>
                             </div>                    
-                        </button>
+                        </Link>
                     );
                 })}
             </nav>

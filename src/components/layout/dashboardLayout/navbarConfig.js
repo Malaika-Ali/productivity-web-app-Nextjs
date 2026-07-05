@@ -16,7 +16,7 @@ export const navbarConfig = {
 
     "/dashboard/habits": {
         title: "My Habits",
-        showSearch: true,
+        showSearch: false,
         searchPlaceholder: "Search habits...",
         action: "Add Habit",
     },
