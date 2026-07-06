@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase/supabaseClient";
+import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
 
 export default function Page() {

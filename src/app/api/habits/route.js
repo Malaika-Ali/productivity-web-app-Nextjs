@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/supabaseServer";
+import { createClient } from "@/lib/supabase/serverClient";
 import { createHabit } from "@/lib/habits";
 
-export async function POST(req){
+export async function POST(req) {
     try {
-        const supabase= createClient()
-        const {data: {user}}=await supabase.auth.getUser()
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json(
-            {error: 'Unauthorized'}, {status: 401}
+            { error: 'Unauthorized' }, { status: 401 }
         )
 
-        const body=await req.json()
+        const body = await req.json()
 
         if (!body.title) return NextResponse.json(
             { error: 'Title is required' }, { status: 400 }

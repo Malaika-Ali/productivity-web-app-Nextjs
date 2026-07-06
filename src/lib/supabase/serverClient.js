@@ -21,12 +21,4 @@ export async function createClient() {
             }
         }
     )
-
-    await supabase.auth.getUser()
-
-    return res
-}
-
-export const config = {
-    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }

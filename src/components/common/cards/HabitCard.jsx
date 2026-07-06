@@ -14,7 +14,7 @@ export function HabitCard({ habit, onToggle, onEdit, onDelete }) {
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${habit.categoryColor}`}>
               {habit.category.toUpperCase()}
             </span>
-            <span className="text-sm text-gray-400">{habit.time}</span>
+            <span className="text-sm text-gray-400">{habit.preferred_time}</span>
           </div>
           <h3 className="text-[17px] font-bold text-gray-900 mt-1">{habit.title}</h3>
         </div>
@@ -22,7 +22,7 @@ export function HabitCard({ habit, onToggle, onEdit, onDelete }) {
         {/* Streak + menu */}
         <div className="flex items-center gap-2 shrink-0">
           <span className="flex items-center gap-1 text-xs font-semibold bg-orange-50 text-orange-500 px-2.5 py-1 rounded-full">
-            🔥 {habit.streak} days
+            🔥 {habit.current_streak} days
           </span>
           <div className="relative">
             <button

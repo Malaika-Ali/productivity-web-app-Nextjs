@@ -7,12 +7,12 @@ import OrDivider from "@/components/common/auth/OrDivider";
 import AuthFormField from "@/components/common/auth/AuthFormField";
 
 import { useForm } from "react-hook-form";
-import * as z from "zod"; 
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
-import { supabase } from "@/lib/supabase/supabaseClient";
+import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
 
 export default function Page() {
@@ -21,16 +21,16 @@ export default function Page() {
 
   const loginSchema = z.object({
     email: z.string()
-    .min(1, "Email is required")
-    .email("Invalid Email Address"),
+      .min(1, "Email is required")
+      .email("Invalid Email Address"),
 
     password: z.string()
-    .min(1, "Password is required")
-    .min(8, "Password must be at least 8 characters"),
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters"),
   });
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({resolver: zodResolver(loginSchema),});
-  const onSubmit = async(data) => {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ resolver: zodResolver(loginSchema), });
+  const onSubmit = async (data) => {
     try {
       setIsLoading(true)
       const { data: result, error } = await supabase.auth.signInWithPassword({
@@ -40,9 +40,10 @@ export default function Page() {
       if (error) {
         throw error;
       }
-      console.log('User has successfully Logged In');
+      console.log('User has successfully Logged In', result);
       toast.success("Successfully Logged In")
-      console.log("session ifo:", supabase.auth.getSession())
+      const ses = await supabase.auth.getSession()
+      console.log("session ifo:", ses)
     } catch (error) {
       console.log("Login failed: ", error.message)
       toast.error(`login Failed: ${error.message}`)
@@ -50,7 +51,7 @@ export default function Page() {
       setIsLoading(false);
     }
   }
-  
+
 
   return (
     <div className="flex-1 flex flex-col min-h-screen">

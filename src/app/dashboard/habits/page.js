@@ -1,7 +1,8 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {Circle} from "lucide-react"
 import {HabitCard} from "../../../components/common/cards/HabitCard"
+import { supabase } from "@/lib/supabase/browserClient"
 
 const habits = [
   {
@@ -77,14 +78,28 @@ const heatmapColors = [
   "bg-[#3730a3]",
 ]
 
-const filters = ["All", "Health", "Learning", "Work", "Personal"]
-
-
+const filters = ["All", "health", "learning", "minfulness", "productivity", "lifestyle"]
 
 export default function HabitsPage() {
   const [activeFilter, setActiveFilter] = useState("All")
-  const [habitList, setHabitList] = useState(habits)
+  const [habitList, setHabitList] = useState([])
   const [search, setSearch] = useState("")
+
+  useEffect(() => {
+    async function fetchHabits() {
+      try {
+        const { data, error } = await supabase
+          .from('habits')
+          .select('*')
+        console.log(data)
+        setHabitList(data)
+      } catch (error) {
+        console.log("Error occured while fetching habits of the user", error)
+      }
+    }
+    fetchHabits()
+  }, [])
+
 
   const filtered = habitList.filter(h => {
     const matchesFilter = activeFilter === "All" || h.category === activeFilter
@@ -116,10 +131,10 @@ export default function HabitsPage() {
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`text-sm font-semibold px-4 py-1.5 rounded-full border transition-all
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full border transition-all cursor-pointer
                 ${activeFilter === f
-                  ? "bg-primary text-white border-[#4f46e5]"
-                  : "bg-white text-gray-500 border-[#e0e0f0] hover:border-[#4f46e5] hover:text-[#4f46e5]"
+                  ? "bg-primary text-white border-purple-500"
+                  : "bg-white text-gray-500 border-[#e0e0f0] hover:border-primary hover:text-primary"
                 }`}
             >
               {f}
