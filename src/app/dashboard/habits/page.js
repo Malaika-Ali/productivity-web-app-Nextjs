@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import {Circle} from "lucide-react"
-import {HabitCard} from "../../../components/common/cards/HabitCard"
+import {HabitCard} from "@/components/common/cards/HabitCard"
 import { supabase } from "@/lib/supabase/browserClient"
 
 const habits = [

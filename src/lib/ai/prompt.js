@@ -50,6 +50,7 @@ Rules:
 - short titles (max 5 words)
 - no markdown
 - no explanations
+- time must be a realistic suggested time for that habit in 12-hour format e.g. "07:00 AM"
 Format:
 {
   "habits": [
@@ -57,7 +58,8 @@ Format:
       "title": "",
       "category": "health | learning | productivity | mindfulness | lifestyle",
       "frequency": "daily | weekdays | weekends",
-      "target_days": [0,1,2,3,4,5,6]
+      "target_days": [0,1,2,3,4,5,6],
+      "time": "07:00 AM"
     }
   ]
 }

@@ -1,18 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Bot, Zap, Check } from "lucide-react";
+import { Bot, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 import { useRouter } from 'next/navigation'
-
-const categoryColors = {
-    health: "bg-green-500/20 text-green-400",
-    learning: "bg-blue-500/20 text-blue-400",
-    productivity: "bg-purple-500/20 text-purple-400",
-    mindfulness: "bg-yellow-500/20 text-yellow-400",
-    lifestyle: "bg-pink-500/20 text-pink-400",
-}
-
+import SuggestedHabitCard from "./SuggestedHabitCard";
 export default function StepTwo({ habits, userId, userName }) {
     const router = useRouter()
     const [selected, setSelected] = useState([]);
@@ -30,23 +22,23 @@ export default function StepTwo({ habits, userId, userName }) {
     const handleClick = async () => {
         if (selected.length === 0) return
         setIsLoading(true)
-       try {
-           const selectedHabits = habits.filter(h => selected.includes(h.title))
-         const res = await fetch('/api/habits/bulk', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ habits: selectedHabits })
-         })
- 
-         const data = await res.json()
-         if (!res.ok) throw new Error(data.error)
- 
-         // Redirect to dashboard
-         router.push('/dashboard/today')
-       } catch (error) {
-           console.error('Error saving habits:', error)
-           setIsLoading(false)
-       }
+        try {
+            const selectedHabits = habits.filter(h => selected.includes(h.title))
+            const res = await fetch('/api/habits/bulk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ habits: selectedHabits })
+            })
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error)
+
+            // Redirect to dashboard
+            router.push('/dashboard/today')
+        } catch (error) {
+            console.error('Error saving habits:', error)
+            setIsLoading(false)
+        }
     }
     return (
         <div
@@ -127,56 +119,7 @@ export default function StepTwo({ habits, userId, userName }) {
                             {habits.map((habit, index) => {
                                 const active = selected.includes(habit.title);
                                 return (
-                                    <button
-                                        key={index}
-                                        onClick={() => toggle(habit.title)}
-                                        className={cn(
-                                            "relative text-left rounded-2xl px-4 pt-4 pb-4 border transition-all duration-200 cursor-pointer group",
-                                            active
-                                                ? "border-violet-500/60 bg-violet-600/20 shadow-lg shadow-violet-900/30"
-                                                : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06] hover:border-white/20"
-                                        )}
-                                    >
-                                        {/* Checkbox */}
-                                        <div
-                                            className={cn(
-                                                "absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200",
-                                                active
-                                                    ? "border-violet-400 bg-violet-500"
-                                                    : "border-white/20 bg-transparent group-hover:border-white/40"
-                                            )}
-                                        >
-                                            {active && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
-                                        </div>
-
-                                        {/* Emoji */}
-                                        {/* <div className="text-3xl mb-2 leading-none">{habit.emoji}</div> */}
-
-                                        {/* Label */}
-                                        <p className={cn(
-                                            "text-sm font-semibold mb-2 transition-colors",
-                                            active ? "text-white" : "text-white/75"
-                                        )}>
-                                            {habit.title}
-                                        </p>
-                                        {/* Badges row */}<div className="flex gap-2 flex-wrap">
-                                            {/* Frequency badge */}
-                                            <span
-                                                className={cn(
-                                                    "inline-block text-xs px-2.5 py-0.5 rounded-full border font-medium transition-all",
-                                                    active
-                                                        ? "bg-violet-500/25 border-violet-400/40 text-violet-300"
-                                                        : "bg-white/5 border-white/15 text-white/40"
-                                                )}
-                                            >
-                                                {habit.frequency}
-                                            </span>
-
-                                            <span className={`text-xs px-2.5 py-1 rounded-full ${categoryColors[habit.category]}`}>
-                                                {habit.category}
-                                            </span>
-                                        </div>
-                                    </button>
+                                    <SuggestedHabitCard title={habit.title} time={habit.time} frequency={habit.frequency} category={habit.category} toggle={toggle} active={active} />
                                 );
                             })}
                         </div>
