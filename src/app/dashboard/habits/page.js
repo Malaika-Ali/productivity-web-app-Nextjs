@@ -4,53 +4,6 @@ import {Circle} from "lucide-react"
 import {HabitCard} from "@/components/common/cards/HabitCard"
 import { supabase } from "@/lib/supabase/browserClient"
 
-const habits = [
-  {
-    id: 1,
-    title: "Morning Meditation",
-    category: "Health",
-    categoryColor: "text-blue-500 bg-blue-50",
-    time: "8:00 AM",
-    streak: 12,
-    completionRate: 78,
-    frequency: "Daily",
-    done: false,
-  },
-  {
-    id: 2,
-    title: "Deep Focus: Coding",
-    category: "Learning",
-    categoryColor: "text-purple-500 bg-purple-50",
-    time: "6:30 PM",
-    streak: 5,
-    completionRate: 92,
-    frequency: "Weekdays",
-    done: true,
-  },
-  {
-    id: 3,
-    title: "Evening Run",
-    category: "Health",
-    categoryColor: "text-blue-500 bg-blue-50",
-    time: "7:00 PM",
-    streak: 21,
-    completionRate: 85,
-    frequency: "Daily",
-    done: false,
-  },
-  {
-    id: 4,
-    title: "Read 20 Pages",
-    category: "Learning",
-    categoryColor: "text-purple-500 bg-purple-50",
-    time: "9:00 PM",
-    streak: 8,
-    completionRate: 60,
-    frequency: "Daily",
-    done: false,
-  },
-]
-
 // Generate a 5-row x ~26-col heatmap grid (≈ last 3 months)
 function generateHeatmap() {
   const grid = []
@@ -115,10 +68,10 @@ export default function HabitsPage() {
     setHabitList(prev => prev.filter(h => h.id !== id))
   }
 
-  function editHabit(habit) {
+  // function editHabit(habit) {
     // placeholder — wire to your modal/drawer
-    alert(`Edit: ${habit.title}`)
-  }
+  //   alert(`Edit: ${habit.title}`)
+  // }
 
   return (
     <div className="min-h-screen">
@@ -150,7 +103,7 @@ export default function HabitsPage() {
                 key={habit.id}
                 habit={habit}
                 onToggle={toggleHabit}
-                onEdit={editHabit}
+                // onEdit={editHabit}
                 onDelete={deleteHabit}
               />
             ))}
