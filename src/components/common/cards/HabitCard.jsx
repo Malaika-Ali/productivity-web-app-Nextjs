@@ -1,10 +1,10 @@
 'use client'
 import { useState, useEffect, useRef } from "react"
 import { Calendar, MoreVertical, CheckCircle2 } from "lucide-react"
-import EditHabitModal from "../modals/EditHabitModal"
+import EditHabitModal from "../modals/HabitModal"
 import { categoryColors } from "@/constants"
 
-export function HabitCard({ habit, onToggle, onDelete }) {
+export function HabitCard({ habit, onToggle, onDelete, onHabitUpdated }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const menuRef = useRef(null)
@@ -113,7 +113,7 @@ export function HabitCard({ habit, onToggle, onDelete }) {
 
       {/* ✅ Modal is outside the card but inside the fragment */}
       {showEditModal && (
-        <EditHabitModal habit={habit} onClose={() => setShowEditModal(false)} />
+        <EditHabitModal habit={habit} onClose={() => setShowEditModal(false)} onHabitUpdated={onHabitUpdated} />
       )}
     </>
   )

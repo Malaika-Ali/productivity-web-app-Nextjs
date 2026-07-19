@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
-import { createHabit } from "@/lib/habits";
 
 export async function PATCH(req, { params }) {
     try {
@@ -69,4 +68,35 @@ export async function PATCH(req, { params }) {
             { error: 'Failed to update habit' }, { status: 500 }
         )
     }
+}
+
+export async function DELETE(req, {params}){
+try {
+    const supabase=await createClient()
+    const {data: {user}}= await supabase.auth.getUser()
+    if(!user) return NextResponse.json(
+        {error: "Unauthorized Request"}, {status: 401}
+    )
+    const {id}=await params
+    if(!id) return NextResponse.json(
+        {error: "habit Id Not Found"}, {status: 400}
+    )
+
+    const {error}=await supabase
+    .from('habits')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id) 
+    
+    if(error) throw error
+
+    return NextResponse.json(
+        {success: true}
+    )
+} catch (error) {
+    return NextResponse.json(
+        {error: "Habit could not be deleted due to internal server error"},
+        {status: 500}
+    )
+}
 }

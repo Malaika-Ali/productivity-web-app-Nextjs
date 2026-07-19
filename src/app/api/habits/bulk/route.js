@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
+import { success } from "zod/v4-mini";
 
 export async function POST(req) {
     try {
@@ -32,5 +33,25 @@ export async function POST(req) {
 }
 
 export async function GET(req){
-    
+    try {
+        const supabase=await createClient()
+        const {data: {user}}=await supabase.auth.getUser()
+        if(!user) return NextResponse.json(
+            {error: 'unautorized Request'}, {status: 401}
+        )
+
+        const {data, error}=await supabase
+        .from('habits')
+        .select('*')
+
+        if(!data) return NextResponse.json(
+            {error: 'No habit Found'}, {status: 400}
+        )
+        
+        return NextResponse.json(data)
+    } catch (error) {
+        return NextResponse.json(
+            {error: "Habits could not be fetched"}, {status: 500}
+        )
+    }
 }

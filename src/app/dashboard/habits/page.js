@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useState } from "react"
-import {Circle} from "lucide-react"
-import {HabitCard} from "@/components/common/cards/HabitCard"
-import { supabase } from "@/lib/supabase/browserClient"
+import { Circle } from "lucide-react"
+import { HabitCard } from "@/components/common/cards/HabitCard"
+import HabitModal from "@/components/common/modals/HabitModal"
 
 // Generate a 5-row x ~26-col heatmap grid (≈ last 3 months)
 function generateHeatmap() {
@@ -37,21 +37,29 @@ export default function HabitsPage() {
   const [activeFilter, setActiveFilter] = useState("All")
   const [habitList, setHabitList] = useState([])
   const [search, setSearch] = useState("")
+  const [showAddModal, setShowAddModal] = useState(false)
+
+  async function fetchHabits() {
+    try {
+      const res = await fetch('/api/habits/bulk')
+      const data = await res.json()
+      console.log(data)
+      setHabitList(data)
+    } catch (error) {
+      console.log("Error occured while fetching habits of the user", error)
+    }
+  }
 
   useEffect(() => {
-    async function fetchHabits() {
-      try {
-        const { data, error } = await supabase
-          .from('habits')
-          .select('*')
-        console.log(data)
-        setHabitList(data)
-      } catch (error) {
-        console.log("Error occured while fetching habits of the user", error)
-      }
-    }
     fetchHabits()
   }, [])
+
+  useEffect(() => {
+    function handleAddHabit() { setShowAddModal(true) }
+    window.addEventListener('open-add-habit', handleAddHabit)
+    return () => window.removeEventListener('open-add-habit', handleAddHabit)
+  }, [])
+
 
 
   const filtered = habitList.filter(h => {
@@ -64,14 +72,21 @@ export default function HabitsPage() {
     setHabitList(prev => prev.map(h => h.id === id ? { ...h, done: !h.done } : h))
   }
 
-  function deleteHabit(id) {
-    setHabitList(prev => prev.filter(h => h.id !== id))
+  async function deleteHabit(id) {
+    try {
+      const res = await fetch(`/api/habits/${id}`, {
+        method: 'DELETE'  
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        console.error(data.error)
+        return
+      }
+      fetchHabits()
+    } catch (error) {
+      console.log(error)
+    }
   }
-
-  // function editHabit(habit) {
-    // placeholder — wire to your modal/drawer
-  //   alert(`Edit: ${habit.title}`)
-  // }
 
   return (
     <div className="min-h-screen">
@@ -94,7 +109,6 @@ export default function HabitsPage() {
             </button>
           ))}
         </div>
-
         {/* Habit cards grid */}
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -105,6 +119,7 @@ export default function HabitsPage() {
                 onToggle={toggleHabit}
                 // onEdit={editHabit}
                 onDelete={deleteHabit}
+                onHabitUpdated={fetchHabits}
               />
             ))}
           </div>
@@ -155,6 +170,15 @@ export default function HabitsPage() {
         </div>
 
       </main>
+
+      {showAddModal && (
+        <HabitModal
+          mode="add"
+          onClose={() => setShowAddModal(false)}
+          onHabitUpdated={fetchHabits}  
+        />
+        )
+        }
     </div>
   )
 }

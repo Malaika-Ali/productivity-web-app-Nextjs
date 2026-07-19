@@ -26,5 +26,6 @@ export const navbarConfig = {
         showSearch: false,
         searchPlaceholder: "Search habits...",
         action: "Add Habit",
+        actionEvent: "open-add-habit",
     },
 };

@@ -1,4 +1,5 @@
 'use client'
+import { useState } from "react";
 import { Bell, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
@@ -8,6 +9,12 @@ import ButtonWithIcon from "../../common/buttons/ButtonWithIcon";
 export default function Navbar() {
     const pathname = usePathname();
     const config = navbarConfig[pathname] ?? navbarConfig.default;
+
+    const handleActionBtnClick = () => {
+        if (config.actionEvent) {
+            window.dispatchEvent(new CustomEvent(config.actionEvent))
+        }
+    }
 
     return (
         <div className="flex items-center justify-between bg-dashboard-background px-6 py-8 w-full">
@@ -51,7 +58,9 @@ export default function Navbar() {
                     Add
                 </Button> */}{
                     config.action &&
-                    <ButtonWithIcon text={config.action} Icon={Plus} />
+                <ButtonWithIcon text={config.action} Icon={Plus}
+                        onClick={handleActionBtnClick}
+                 />
 
                 }
             </div>

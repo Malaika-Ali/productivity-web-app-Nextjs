@@ -79,7 +79,7 @@ function TimeColumn({ items, selected, onSelect }) {
     )
 }
 
-export default function EditHabitModal({ habit, onClose, onSave }) {
+export default function HabitModal({ habit=null, onClose, mode="edit", onHabitUpdated }) {
     const [title, setTitle] = useState(habit?.title || "")
     const [category, setCategory] = useState(habit?.category || "")
     const [frequency, setFrequency] = useState(habit?.frequency || "Daily")
@@ -126,21 +126,34 @@ export default function EditHabitModal({ habit, onClose, onSave }) {
     }, [onClose])
 
     async function handleSave() {
+        if (!title.trim()) return
         setSaving(true)
-        const res = await fetch(`/api/habits/${habit.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: title,
-                category: category,
-                frequency: frequency,
-                preferred_time: toDbTime(hour, minute, period),
-                reminder_enabled: reminderEnabled,
+        const payload = {
+            title,
+            category,
+            frequency,
+            preferred_time: toDbTime(hour, minute, period),
+            reminder_enabled: reminderEnabled,
+        }
+
+
+        const res = mode === "edit"
+            ? await fetch(`/api/habits/${habit.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             })
-        })
+            : 
+            await fetch('/api/habits', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+
         const data = await res.json()
         if (!res.ok) console.error(data.error)
         setSaving(false)
+        onHabitUpdated()
         onClose()
     }
 
@@ -153,7 +166,9 @@ export default function EditHabitModal({ habit, onClose, onSave }) {
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">Edit Habit</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        {mode === "edit" ? "Edit Habit" : "Add Habit"}
+                    </h2>
                     <button
                         onClick={onClose}
                         className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
@@ -169,7 +184,7 @@ export default function EditHabitModal({ habit, onClose, onSave }) {
                         type="text"
                         value={title}
                         onChange={e => setTitle(e.target.value)}
-                        // placeholder="e.g. Morning Run"
+                        placeholder={mode === "add" ? "e.g. Morning Run" : ""}
                         className="w-full px-4 py-3 rounded-xl border border-[#e0e0f0] text-gray-800 placeholder-gray-400 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
                     />
                 </div>
@@ -310,7 +325,7 @@ export default function EditHabitModal({ habit, onClose, onSave }) {
                         disabled={!title.trim() || saving}
                         className="flex-1 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
-                        {saving ? "Saving..." : "Save Changes"}
+                        {saving ? "Saving..." : mode === "edit" ? "Save Changes" : "Add Habit"}
                     </button>
                 </div>
 
