@@ -1,9 +1,8 @@
 "use client";
+import { useEffect, useEffectEvent, useState } from "react";
 
-import { useState } from "react";
 
 const FILTERS = ["All", "Habits", "Tasks"];
-
 const tasks = [
     {
         id: 1,
@@ -67,7 +66,7 @@ function CheckIcon({ done, active }) {
     if (done) {
         return (
             <div className="w-6 h-6 rounded-md bg-green-400 flex items-center justify-center shrink-0">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <svg width="13" height="20" viewBox="0 0 13 13" fill="none">
                     <path d="M2 6.5l3.5 3.5L11 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </div>
@@ -83,6 +82,8 @@ function CheckIcon({ done, active }) {
 
 export default function TodaysPlans() {
     const [activeFilter, setActiveFilter] = useState("All");
+    const [habitsList, setHabitsList] = useState([])
+    const [completedHabits, setCompletedHabits] = useState([])
 
     const filtered = tasks.filter((t) => {
         if (activeFilter === "All") return true;
@@ -90,6 +91,20 @@ export default function TodaysPlans() {
         if (activeFilter === "Tasks") return t.type === "task";
         return true;
     });
+
+    const fetchHabits = async () => {
+        const res = await fetch('/api/habits/today')
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`)
+        }
+        const { habits } = await res.json()
+        setHabitsList(habits)
+    }
+
+    useEffect(() => {
+        fetchHabits()
+        console.log(habitsList)
+    }, [])
 
     return (
         <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-2 border-b-8 border-gray-200">
@@ -102,8 +117,8 @@ export default function TodaysPlans() {
                             key={f}
                             onClick={() => setActiveFilter(f)}
                             className={`px-4 py-1.5 rounded-lg text-[12.4px] font-bold transition-all cursor-pointer ${activeFilter === f
-                                    ? "bg-purple-50 text-purple-800 shadow-sm"
-                                    : "text-gray-500 hover:text-gray-600"
+                                ? "bg-purple-50 text-purple-800 shadow-sm"
+                                : "text-gray-500 hover:text-gray-600"
                                 }`}
                         >
                             {f}
@@ -119,7 +134,7 @@ export default function TodaysPlans() {
                         key={task.id}
                         className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${task.active
                             ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
-                                : "border-gray-100 bg-gray-50/60"
+                            : "border-gray-100 bg-gray-50/60"
                             }`}
                     >
                         {/* Left: checkbox + text */}

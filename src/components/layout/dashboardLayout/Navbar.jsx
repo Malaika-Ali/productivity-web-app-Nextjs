@@ -1,14 +1,29 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { navbarConfig } from "./navbarConfig";
 import ButtonWithIcon from "../../common/buttons/ButtonWithIcon";
+import { supabase } from "@/lib/supabase/browserClient";
 
 export default function Navbar() {
+    const [username, setUsername] = useState(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUsername(user?.user_metadata?.full_name ?? "there");
+        });
+    }, []);
+
     const pathname = usePathname();
     const config = navbarConfig[pathname] ?? navbarConfig.default;
+
+    const title = pathname === "/dashboard/today"
+        ? `Good morning, ${mounted ? username ?? "" : ""}`
+        : config.title;
 
     const handleActionBtnClick = () => {
         if (config.actionEvent) {
@@ -27,7 +42,7 @@ export default function Navbar() {
                 }
 
                 <h1 className="text-[32px] font-extrabold text-gray-900 leading-tight tracking-tight">
-                    {config.title}
+                    {title}
                 </h1>
             </div>
 

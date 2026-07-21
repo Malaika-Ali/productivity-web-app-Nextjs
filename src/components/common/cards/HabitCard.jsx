@@ -111,7 +111,6 @@ export function HabitCard({ habit, onToggle, onDelete, onHabitUpdated }) {
         </div>
       </div>
 
-      {/* ✅ Modal is outside the card but inside the fragment */}
       {showEditModal && (
         <EditHabitModal habit={habit} onClose={() => setShowEditModal(false)} onHabitUpdated={onHabitUpdated} />
       )}

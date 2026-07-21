@@ -1,9 +1,3 @@
-import { supabase } from "@/lib/supabase/browserClient";
-
-const {data:{user}}=await supabase.auth.getUser()
-console.log(user)
-const username=user?.user_metadata?.full_name
-
 
 const today = new Date();
 const dateStr = today.toLocaleDateString("en-US", {
@@ -14,7 +8,7 @@ const dateStr = today.toLocaleDateString("en-US", {
 
 export const navbarConfig = {
     "/dashboard/today": {
-        title: `Good morning, ${username}`,
+        // title: "Good morning",
         subtitle: `${dateStr}`,
         showSearch: false,
         // searchPlaceholder: "Search",
