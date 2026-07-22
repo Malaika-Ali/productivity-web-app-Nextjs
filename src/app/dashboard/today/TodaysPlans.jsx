@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useEffectEvent, useState } from "react";
+import HabitCard from "./HabitCard";
 
-
-const FILTERS = ["All", "Habits", "Tasks"];
+// const FILTERS = ["All", "Habits", "Tasks"];
 const tasks = [
     {
         id: 1,
@@ -93,12 +93,19 @@ export default function TodaysPlans() {
     });
 
     const fetchHabits = async () => {
-        const res = await fetch('/api/habits/today')
-        if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`)
+        try {
+            const res = await fetch('/api/habits/today')
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`)
+            }
+            const data=await res.json()
+            // const { habits } = await res.json()
+            console.log(data)
+            setHabitsList(data.habits)
+            console.log(data.habits)
+        } catch (error) {
+            console.log("failed to fetch the today's habits", error)
         }
-        const { habits } = await res.json()
-        setHabitsList(habits)
     }
 
     useEffect(() => {
@@ -112,7 +119,7 @@ export default function TodaysPlans() {
             <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-gray-900 tracking-tighter">Today's plan</h2>
                 <div className="flex items-center gap-1  rounded-xl p-1">
-                    {FILTERS.map((f) => (
+                    {/* {FILTERS.map((f) => (
                         <button
                             key={f}
                             onClick={() => setActiveFilter(f)}
@@ -123,47 +130,49 @@ export default function TodaysPlans() {
                         >
                             {f}
                         </button>
-                    ))}
+                    ))} */}
+                    Habits
                 </div>
             </div>
 
             {/* Task list */}
             <div className="flex flex-col gap-2.5">
-                {filtered.map((task) => (
-                    <div
-                        key={task.id}
-                        className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${task.active
-                            ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
-                            : "border-gray-100 bg-gray-50/60"
-                            }`}
-                    >
-                        {/* Left: checkbox + text */}
-                        <div className="flex items-center gap-3 min-w-0">
-                            <CheckIcon done={task.done} active={task.active} />
-                            <div className="min-w-0">
-                                <p
-                                    className={`text-sm font-bold leading-snug ${task.done ? "line-through text-gray-400" : "text-gray-800"
-                                        }`}
-                                >
-                                    {task.title}
-                                </p>
-                                <p className={`text-[11px] font-extrabold mt-0.5 tracking-wide ${task.metaColor}`}>
-                                    {task.meta.join(" · ")}
-                                </p>
-                            </div>
-                        </div>
+                {habitsList.map((habit) => (
+                    // <div
+                    //     key={task.id}
+                    //     className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${task.active
+                    //         ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
+                    //         : "border-gray-100 bg-gray-50/60"
+                    //         }`}
+                    // >
+                    //     {/* Left: checkbox + text */}
+                    //     <div className="flex items-center gap-3 min-w-0">
+                    //         <CheckIcon done={task.done} active={task.active} />
+                    //         <div className="min-w-0">
+                    //             <p
+                    //                 className={`text-sm font-bold leading-snug ${task.done ? "line-through text-gray-400" : "text-gray-800"
+                    //                     }`}
+                    //             >
+                    //                 {task.title}
+                    //             </p>
+                    //             <p className={`text-[11px] font-extrabold mt-0.5 tracking-wide ${task.metaColor}`}>
+                    //                 {task.meta.join(" · ")}
+                    //             </p>
+                    //         </div>
+                    //     </div>
 
-                        {/* Right: time or NOW badge */}
-                        <div className="ml-4 shrink-0">
-                            {task.timeBadge ? (
-                                <span className="bg-amber-100 text-amber-600 text-xs font-bold px-3 py-1 rounded-lg">
-                                    {task.timeBadge}
-                                </span>
-                            ) : (
-                                <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.time}</span>
-                            )}
-                        </div>
-                    </div>
+                    //     {/* Right: time or NOW badge */}
+                    //     <div className="ml-4 shrink-0">
+                    //         {task.timeBadge ? (
+                    //             <span className="bg-amber-100 text-amber-600 text-xs font-bold px-3 py-1 rounded-lg">
+                    //                 {task.timeBadge}
+                    //             </span>
+                    //         ) : (
+                    //             <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.time}</span>
+                    //         )}
+                    //     </div>
+                    // </div>
+                    <HabitCard habit={habit}/>
                 ))}
             </div>
         </div>

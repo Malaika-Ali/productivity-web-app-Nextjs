@@ -3,6 +3,7 @@ import StatsCardContainer from './StatsCardsContainer';
 import TodaysPlans from './TodaysPlans';
 import CoachNote from './CoachNote';
 import ThisWeek from './ThisWeek';
+import TodaysTasks from './TodaysTasks';
 
 
 export const metadata = {
@@ -25,8 +26,9 @@ const page = () => {
 
                     {/* Right column — Coach note + This week */}
                     <div className="flex-1 flex flex-col gap-4">
+                        <TodaysTasks/>
                         <CoachNote />
-                        <ThisWeek />
+                        {/* <ThisWeek /> */}
                     </div>
 
                 </div>

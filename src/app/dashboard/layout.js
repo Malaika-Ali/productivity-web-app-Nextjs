@@ -3,6 +3,7 @@ import Sidebar from '@/components/layout/dashboardLayout/Sidebar'
 import React from 'react'
 
 const layout = ({ children }) => {
+
     return (
         <div className="dashboard">
             <header className='header'> <Navbar /></header>

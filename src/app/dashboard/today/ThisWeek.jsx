@@ -1,8 +1,3 @@
-// ThisWeek.jsx
-// Dependencies: Tailwind CSS
-// Place in: components/ThisWeek.jsx
-// No recharts needed — pure CSS bar chart for pixel-perfect match
-
 "use client";
 
 const days = [
