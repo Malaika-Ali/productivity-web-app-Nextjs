@@ -103,6 +103,7 @@ export default function TodaysPlans() {
             console.log(data)
             setHabitsList(data.habits)
             console.log(data.habits)
+            console.log("completed today", data.completedToday)
         } catch (error) {
             console.log("failed to fetch the today's habits", error)
         }

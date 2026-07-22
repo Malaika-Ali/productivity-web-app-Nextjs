@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
 
+const FREQUENCY_TO_DAYS = {
+    daily: [0, 1, 2, 3, 4, 5, 6],
+    weekdays: [1, 2, 3, 4, 5],
+    weekends: [0, 6],
+};
+
 export async function POST(req) {
     try {
         const supabase =await createClient()
@@ -15,14 +21,18 @@ export async function POST(req) {
             { error: 'Title is required' }, { status: 400 }
         )
 
+        const frequency = body.frequency || 'daily'
+        const target_days = body.target_days || FREQUENCY_TO_DAYS[frequency.toLowerCase()] || FREQUENCY_TO_DAYS.daily
+
         const { data, error } = await supabase
             .from('habits')
             .insert({
                 user_id: user.id,
                 title: body.title,
                 category: body.category || 'lifestyle',
-                frequency: body.frequency || 'daily',
-                target_days: body.target_days || [0, 1, 2, 3, 4, 5, 6],
+                frequency,
+                target_days,
+                preferred_time: body.preferred_time,
                 reminder_time: body.reminder_time || null,
                 reminder_enabled: body.reminder_enabled || false,
                 is_ai_suggested: body.is_ai_suggested || false

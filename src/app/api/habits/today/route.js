@@ -26,7 +26,7 @@ export async function GET(req) {
         )
 
         console.log("Todays habits are", todaysHabits)
-        const completedToday = habits.map(habit => ({
+        const completedToday = todaysHabits.map(habit => ({
             ...habit,
             completedToday: habit.habit_completions.some(log => log.completed_on === today)
         }))
