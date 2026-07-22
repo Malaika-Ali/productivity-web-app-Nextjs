@@ -1,10 +1,4 @@
-
-const today = new Date();
-const dateStr = today.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-});
+import { dateStr } from "@/lib/todaysDate";
 
 export const navbarConfig = {
     "/dashboard/today": {

@@ -1,4 +1,5 @@
 import { categoryColors } from '@/constants';
+import { parseTime } from '@/lib/parseTime';
 import React from 'react'
 
 
@@ -54,7 +55,13 @@ const HabitCard = ({habit}) => {
               ) : (
                   <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{habit.preferred_time}</span>
               )} */}
-               <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{habit.preferred_time}</span>
+              <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{habit?.preferred_time
+                  ? (() => {
+                      const { hour, minute, period } = parseTime(habit.preferred_time)
+                      return `${hour}:${minute} ${period}`
+                  })()
+                  : "Anytime"
+              }</span>
           </div>
       </div>
   )

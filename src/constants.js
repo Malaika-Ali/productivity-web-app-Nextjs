@@ -1,3 +1,11 @@
+export const CATEGORIES = ["health", "learning", "productivity", "mindfulness", "lifestyle"]
+
+export const FREQUENCIES = ["daily", "weekdays", "weekends"]
+
+export const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"))
+export const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"))
+export const PERIODS = ["AM", "PM"]
+
 // decides the colors corresponding to the category of the habits
 export const categoryColors = {
     health: "bg-green-500/20 text-green-400",
@@ -6,3 +14,4 @@ export const categoryColors = {
     mindfulness: "bg-yellow-500/20 text-yellow-400",
     lifestyle: "bg-pink-500/20 text-pink-400",
 }
+

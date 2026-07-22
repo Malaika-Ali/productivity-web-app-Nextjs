@@ -1,4 +1,3 @@
-// src/hooks/useHabits.js
 async function toggleHabit(habitId, isCurrentlyCompleted) {
     // 1. Update UI instantly — don't wait for API
     setCompletedIds(prev => {
