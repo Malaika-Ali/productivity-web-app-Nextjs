@@ -40,6 +40,22 @@ export default function TodaysPlans() {
     //     fetchHabits()
     // }, [])
 
+    const fetchTasks=async()=>{
+        try {
+            const res=await fetch("/api/tasks/today")
+            if (!res.ok) throw new Error("fetch error")
+
+            const tasks=await res.json()
+            console.log("The fetched tasks list is", tasks)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        fetchTasks()
+    },[])
+
     return (
         <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-2 border-b-8 border-gray-200">
             {/* Header */}

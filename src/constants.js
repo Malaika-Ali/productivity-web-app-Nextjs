@@ -6,6 +6,8 @@ export const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart
 export const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"))
 export const PERIODS = ["AM", "PM"]
 
+export const PRIORITIES=["low", "medium", "high"]
+
 // decides the colors corresponding to the category of the habits
 export const categoryColors = {
     health: "bg-green-500/20 text-green-400",

@@ -20,9 +20,49 @@ function CheckIcon({ done, active }) {
 
 const TaskCard = ({task, onToggle}) => {
   return (
-    <div>
-      
-    </div>
+     <div
+              key={task.id}
+              className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all  ${task.completedToday ? "bg-gray-100" : ""} ${task.active
+                  ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
+                  : "border-gray-100 bg-gray-50/60"
+                  }`}
+          >
+              {/* Left: checkbox + text */}
+              <div className={`flex items-center gap-3 min-w-0 `}>
+                  <button
+                      onClick={() => onToggle(task.id, task.completedToday)}
+                      className="cursor-pointer"
+                  >
+                  <CheckIcon done={task.completedToday} active={task.active} />
+                  </button>
+                  <div className="min-w-0">
+                      <p
+                          className={`text-sm font-bold leading-snug ${task.completedToday ? "line-through text-gray-400" : "text-gray-800"
+                              }`}
+                      >
+                          {task.title}
+                      </p>
+                  </div>
+              </div>
+    
+              {/* Right: time or NOW badge */}
+              <div className="ml-4 shrink-0">
+                  {/* {task.timeBadge ? (
+                      <span className="bg-amber-100 text-amber-600 text-xs font-bold px-3 py-1 rounded-lg">
+                          {task.timeBadge}
+                      </span>
+                  ) : (
+                      <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.preferred_time}</span>
+                  )} */}
+                  <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task?.preferred_time
+                      ? (() => {
+                          const { hour, minute, period } = parseTime(task.preferred_time)
+                          return `${hour}:${minute} ${period}`
+                      })()
+                      : "Anytime"
+                  }</span>
+              </div>
+          </div>
   )
 }
 

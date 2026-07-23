@@ -16,4 +16,11 @@ export const navbarConfig = {
         action: "Add Habit",
         actionEvent: "open-add-habit",
     },
+    "/dashboard/tasks": {
+        title: "My Tasks",
+        showSearch: false,
+        searchPlaceholder: "Search habits...",
+        action: "Add Task",
+        actionEvent: "open-add-task",
+    },
 };
