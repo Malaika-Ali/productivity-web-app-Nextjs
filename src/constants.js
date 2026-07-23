@@ -15,3 +15,11 @@ export const categoryColors = {
     lifestyle: "bg-pink-500/20 text-pink-400",
 }
 
+export const categoryColorsText = {
+    health: "text-green-400",
+    learning: "text-blue-400",
+    productivity: "text-purple-400",
+    mindfulness: "text-yellow-400",
+    lifestyle: "text-pink-400",
+}
+

@@ -1,4 +1,4 @@
-import { categoryColors } from '@/constants';
+import { categoryColors, categoryColorsText } from '@/constants';
 import { parseTime } from '@/lib/parseTime';
 import React from 'react'
 
@@ -20,26 +20,31 @@ function CheckIcon({ done, active }) {
         />
     );
 }
-const HabitCard = ({habit}) => {
+const HabitCard = ({ habit, onToggle }) => {
   return (
       <div
           key={habit.id}
-          className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${habit.active
+          className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all  ${habit.completedToday ? "bg-gray-100" : ""} ${habit.active
               ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
               : "border-gray-100 bg-gray-50/60"
               }`}
       >
           {/* Left: checkbox + text */}
-          <div className="flex items-center gap-3 min-w-0">
-              <CheckIcon done={habit.done} active={habit.active} />
+          <div className={`flex items-center gap-3 min-w-0 `}>
+              <button
+                  onClick={() => onToggle(habit.id, habit.completedToday)}
+                  className="cursor-pointer"
+              >
+              <CheckIcon done={habit.completedToday} active={habit.active} />
+              </button>
               <div className="min-w-0">
                   <p
-                      className={`text-sm font-bold leading-snug ${habit.done ? "line-through text-gray-400" : "text-gray-800"
+                      className={`text-sm font-bold leading-snug ${habit.completedToday ? "line-through text-gray-400" : "text-gray-800"
                           }`}
                   >
                       {habit.title}
                   </p>
-                  <p className={`text-[11px] font-extrabold mt-0.5 tracking-wide ${categoryColors[habit.category]}`}>
+                  <p className={`text-[12px] font-extrabold mt-0.5  capitalize ${categoryColorsText[habit.category]}`}>
                       {/* {habit.meta.join(" · ")} */}
                       {habit.category}
                   </p>

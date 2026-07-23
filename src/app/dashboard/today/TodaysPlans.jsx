@@ -1,29 +1,16 @@
 "use client";
-import { useEffect, useEffectEvent, useState } from "react";
-import HabitCard from "./HabitCard";
+import { useEffect, useState } from "react";
 
-function CheckIcon({ done, active }) {
-    if (done) {
-        return (
-            <div className="w-6 h-6 rounded-md bg-green-400 flex items-center justify-center shrink-0">
-                <svg width="13" height="20" viewBox="0 0 13 13" fill="none">
-                    <path d="M2 6.5l3.5 3.5L11 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            </div>
-        );
-    }
-    return (
-        <div
-            className={`w-6 h-6 rounded-md border-2 shrink-0 ${active ? "border-purple-500" : "border-gray-300"
-                }`}
-        />
-    );
-}
+import HabitCard from "./HabitCard";
+import { useHabits } from "@/hooks/useHabits";
 
 export default function TodaysPlans() {
     const [activeFilter, setActiveFilter] = useState("All");
     const [habitsList, setHabitsList] = useState([])
     const [completedHabits, setCompletedHabits] = useState([])
+
+    const { habits, toggleHabit } = useHabits()
+    
 
     // const filtered = tasks.filter((t) => {
     //     if (activeFilter === "All") return true;
@@ -32,26 +19,26 @@ export default function TodaysPlans() {
     //     return true;
     // });
 
-    const fetchHabits = async () => {
-        try {
-            const res = await fetch('/api/habits/today')
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`)
-            }
-            const data=await res.json()
-            // const { habits } = await res.json()
-            console.log(data)
-            setHabitsList(data.habits)
-            console.log(data.habits)
-            console.log("completed today", data.completedToday)
-        } catch (error) {
-            console.log("failed to fetch the today's habits", error)
-        }
-    }
+    // const fetchHabits = async () => {
+    //     try {
+    //         const res = await fetch('/api/habits/today')
+    //         if (!res.ok) {
+    //             throw new Error(`HTTP ${res.status}`)
+    //         }
+    //         const data=await res.json()
+    //         // const { habits } = await res.json()
+    //         console.log(data)
+    //         setHabitsList(data.habits)
+    //         console.log(data.habits)
+    //         console.log("completed today", data.completedToday)
+    //     } catch (error) {
+    //         console.log("failed to fetch the today's habits", error)
+    //     }
+    // }
 
-    useEffect(() => {
-        fetchHabits()
-    }, [])
+    // useEffect(() => {
+    //     fetchHabits()
+    // }, [])
 
     return (
         <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-2 border-b-8 border-gray-200">
@@ -65,8 +52,8 @@ export default function TodaysPlans() {
 
             {/* Task list */}
             <div className="flex flex-col gap-2.5">
-                {habitsList.map((habit) => (
-                    <HabitCard habit={habit}/>
+                {habits.map((habit) => (
+                    <HabitCard key={habit.id} habit={habit} onToggle={toggleHabit} />
                 ))}
             </div>
         </div>
