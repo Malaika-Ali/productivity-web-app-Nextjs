@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { X, Clock, ChevronDown, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react"
+import { X, Clock, ChevronDown, Calendar as CalendarIcon } from "lucide-react"
 import { parseTime } from "@/lib/parseTime"
 import { PRIORITIES, HOURS, MINUTES, PERIODS } from "@/constants"
 import CalendarDropdown from "../dropdowns/CalendarDropdown"

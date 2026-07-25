@@ -1,3 +1,5 @@
+import { PriorityIndicators } from '@/constants';
+import { parseTime } from '@/lib/parseTime';
 import React from 'react'
 
 function CheckIcon({ done, active }) {
@@ -18,7 +20,7 @@ function CheckIcon({ done, active }) {
     );
 }
 
-const TaskCard = ({task, onToggle}) => {
+const TaskCard = ({ task, onToggle}) => {
   return (
      <div
               key={task.id}
@@ -27,8 +29,15 @@ const TaskCard = ({task, onToggle}) => {
                   : "border-gray-100 bg-gray-50/60"
                   }`}
           >
+       
               {/* Left: checkbox + text */}
-              <div className={`flex items-center gap-3 min-w-0 `}>
+              <div className='flex items-center gap-3 min-w-0 '>
+              <div className={`flex w-3 h-3 rounded-full shrink-0
+                `}
+                  style={{ backgroundColor: task.priority === 'high' ? '#f59e0b' : task.priority === 'medium' ? '#eab308' : '#000' }}
+                  >
+                    
+                  </div>
                   <button
                       onClick={() => onToggle(task.id, task.completedToday)}
                       className="cursor-pointer"
@@ -54,9 +63,9 @@ const TaskCard = ({task, onToggle}) => {
                   ) : (
                       <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.preferred_time}</span>
                   )} */}
-                  <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task?.preferred_time
+                  <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task?.due_time
                       ? (() => {
-                          const { hour, minute, period } = parseTime(task.preferred_time)
+                          const { hour, minute, period } = parseTime(task.due_time)
                           return `${hour}:${minute} ${period}`
                       })()
                       : "Anytime"

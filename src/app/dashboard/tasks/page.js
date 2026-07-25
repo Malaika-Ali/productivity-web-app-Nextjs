@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
 import { Check, Pencil, Trash2 } from "lucide-react";
-import HabitModal from "@/components/common/modals/HabitModal";
 import TaskModal from "@/components/common/modals/TaskModal";
 
 const initialTasks = [
