@@ -1,9 +1,9 @@
 import AuthLeftPanel from "@/components/layout/authLayout/AuthLeftpanel";
 import { Toaster } from "sonner";
 
-export const metadata = {
-    title: "Authentication",
-};
+// export const metadata = {
+//     title: "Authentication",
+// };
 
 export default function AuthLayout({ children }) {
     return (

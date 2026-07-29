@@ -10,7 +10,7 @@ export default function TodaysPlans() {
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-gray-900 tracking-tighter">Today's plan</h2>
-                <div className="flex items-center gap-1  rounded-xl p-1">
+                <div className="flex items-center gap-1 font-bold  rounded-xl p-1">
                     Habits
                 </div>
             </div>

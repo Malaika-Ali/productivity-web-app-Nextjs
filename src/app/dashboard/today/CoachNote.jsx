@@ -5,60 +5,71 @@ import { Brain } from 'lucide-react';
 import { Sparkles, RefreshCw, Lightbulb } from "lucide-react"
 import { useInsights } from "@/hooks/useInsights"
 
-export default function CoachNote(){
+export default function CoachNote() {
     const { insight, loading, refreshing, error, regenerate } = useInsights()
- 
+
     return (
-    <div className="bg-white rounded-3xl p-6 w-full border-2 border-b-8 border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Sparkles size={16} className="text-primary" />
+        <div className="bg-purple-600 rounded-3xl overflow-hidden p-6 w-full text-violet-50 relative border-2 border-r-4 border-b-8 border-purple-800">
+         
+            {/* Subtle background circle for depth */}
+            <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-purple-500/40 pointer-events-none" />
+            <div className="absolute -bottom-8 -left-4 w-32 h-32 rounded-full bg-purple-700/40 pointer-events-none" />
+
+            <div className="relative z-10">
+                <div className="flex items-center gap-2.5 mb-3">
+                    {/* Coach icon */}
+                    <div className="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
+                        <Brain color='white' fill='white' />
+                    </div>
+                    {/* <p className="text-[12px] font-extrabold tracking-wide text-purple-300 uppercase">
+                        COACH
+                       . 2 MIN Read
+                    </p> */}
+                    <h3 className="font-bold text-white leading-tight text-lg">A note from your AI coach</h3>
                 </div>
-                <h2 className="text-lg font-bold text-gray-900 tracking-tight">Your Weekly Insight</h2>
+
+                {/* {!loading && (
+                    <button
+                        onClick={regenerate}
+                        disabled={refreshing}
+                        aria-label="Regenerate insight"
+                        className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-primary/5 cursor-pointer transition-colors disabled:opacity-40"
+                    >
+                        <RefreshCw size={15} className={refreshing ? "animate-spin" : ""} />
+                    </button>
+                )} */}
             </div>
 
-            {!loading && (
-                <button
-                    onClick={regenerate}
-                    disabled={refreshing}
-                    aria-label="Regenerate insight"
-                    className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-primary/5 cursor-pointer transition-colors disabled:opacity-40"
-                >
-                    <RefreshCw size={15} className={refreshing ? "animate-spin" : ""} />
-                </button>
+            {loading && <InsightSkeleton />}
+
+            {!loading && error && (
+                <p className="text-sm text-white">
+                    Couldn't load your insight right now. Try refreshing in a moment.
+                </p>
+            )}
+
+            {!loading && !error && insight && (
+                <div className="flex flex-col gap-4">
+                    <p className="text-sm leading-relaxed text-purple-100 z-100 mb-5">
+                        {/* {insight.summary} */}
+                        You have kept the morning run for 12 days, that's great. I noticed reading slips after 9 PM, so try to move it to 10 AM.
+                    </p>
+{/* suggestions */}
+                    {/* <div className="flex flex-col gap-2.5">
+                        {insight.suggestions.map((suggestion, i) => (
+                            <div
+                                key={i}
+                                className="flex items-start gap-2.5 bg-gray-50/60 rounded-xl px-3.5 py-3"
+                            >
+                                <Lightbulb size={14} className="text-primary mt-0.5 shrink-0" />
+                                <p className="text-sm text-gray-600 font-normal">{suggestion}</p>
+                            </div>
+                        ))}
+                    </div> */}
+                </div>
             )}
         </div>
-
-        {loading && <InsightSkeleton />}
-
-        {!loading && error && (
-            <p className="text-sm text-gray-400">
-                Couldn't load your insight right now. Try refreshing in a moment.
-            </p>
-        )}
-
-        {!loading && !error && insight && (
-            <div className="flex flex-col gap-4">
-                <p className="text-sm text-gray-700 leading-relaxed">
-                    {insight.summary}
-                </p>
-
-                <div className="flex flex-col gap-2.5">
-                    {insight.suggestions.map((suggestion, i) => (
-                        <div
-                            key={i}
-                            className="flex items-start gap-2.5 bg-gray-50/60 rounded-xl px-3.5 py-3"
-                        >
-                            <Lightbulb size={14} className="text-primary mt-0.5 shrink-0" />
-                            <p className="text-sm text-gray-600 leading-snug">{suggestion}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        )}
-    </div>
-)
+    )
 }
 
 function InsightSkeleton() {

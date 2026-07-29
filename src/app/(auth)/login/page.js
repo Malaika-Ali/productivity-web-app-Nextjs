@@ -15,6 +15,10 @@ import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
 
+// export const metadata = {
+//   title: "LogIn",
+// };
+
 export default function Page() {
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false)

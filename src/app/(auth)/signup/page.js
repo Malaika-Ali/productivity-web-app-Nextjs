@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import SocialLoginButton from "@/components/common/auth/SocialLoginButton";
@@ -16,9 +17,14 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
 
+// export const metadata = {
+//     title: "SignUp",
+// };
+
 export default function Page() {
     const [showPwd, setShowPwd] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const router=useRouter()
 
     const signupSchema = z.object({
         fullname: z.string()
@@ -56,6 +62,7 @@ export default function Page() {
             }
             console.log('User and profile created!');
             toast.success("User has been created")
+            router.push('/login')
         } catch (error) {
             console.log("signup failed: ", error.message)
             toast.error(`Signup Failed: ${error.message}`)
@@ -162,7 +169,7 @@ export default function Page() {
                         <Button
                             disabled={isLoading}
                             type="submit"
-                            className="w-full h-12 rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide shadow-md shadow-purple-200 transition-all mt-1 cursor-pointer"
+                            className="w-full h-12 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide transition-all mt-1 cursor-pointer border-r-8 border-b-8 border-purple-800"
                         >
                             {isLoading ? (
                                 <>
