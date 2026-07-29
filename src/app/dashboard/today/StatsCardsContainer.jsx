@@ -1,4 +1,5 @@
 import StatCard from "../../../components/common/cards/StatCard";
+import CoachNote from "./CoachNote";
 
 function HabitsIcon() {
     return (
@@ -113,10 +114,13 @@ const cards = [
 
 export default function StatsCardContainer() {
     return (
-        <div className="flex gap-4 bg-purple-50/40 rounded-3xl flex-wrap">
+        <div className="flex gap-4 bg-purple-50/40 rounded-3xl">
             {cards.map((card) => (
                 <StatCard key={card.id} {...card} />
             ))}
+            <CoachNote />
+
         </div>
+
     );
 }

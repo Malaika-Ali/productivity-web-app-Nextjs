@@ -11,9 +11,6 @@ export default function CoachNote() {
     return (
         <div className="bg-purple-600 rounded-3xl overflow-hidden p-6 w-full text-violet-50 relative border-2 border-r-4 border-b-8 border-purple-800">
          
-            {/* Subtle background circle for depth */}
-            <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-purple-500/40 pointer-events-none" />
-            <div className="absolute -bottom-8 -left-4 w-32 h-32 rounded-full bg-purple-700/40 pointer-events-none" />
 
             <div className="relative z-10">
                 <div className="flex items-center gap-2.5 mb-3">

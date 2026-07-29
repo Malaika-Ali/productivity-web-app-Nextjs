@@ -32,7 +32,7 @@ export default function Navbar() {
     }
 
     return (
-        <div className="flex items-center justify-between bg-dashboard-background px-6 py-8 w-full">
+        <div className="flex items-center justify-between bg-dashboard-background px-6 py-6 w-full">
             {/* Left: Date + Greeting */}
             <div className="flex flex-col">
                 {config.subtitle &&

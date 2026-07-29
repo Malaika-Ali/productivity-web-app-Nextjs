@@ -4,6 +4,7 @@ import TodaysPlans from './TodaysPlans';
 import CoachNote from './CoachNote';
 import ThisWeek from './ThisWeek';
 import TodaysTasks from './TodaysTasks';
+import TodayHeader from './TodayHeader';
 
 
 export const metadata = {
@@ -12,8 +13,8 @@ export const metadata = {
 const page = () => {
     return (
         <div className='flex flex-col min-h-screen justify-center px-8'>
-            <StatsCardContainer />
-
+            {/* <StatsCardContainer /> */}
+            <TodayHeader />
             <div className=" bg-purple-50/50 flex items-start justify-center flex-wrap my-6">
 
 
@@ -26,7 +27,7 @@ const page = () => {
 
                     {/* Right column — Coach note + This week */}
                     <div className="flex-1 flex flex-col gap-4">
-                        <TodaysTasks/>
+                        <TodaysTasks />
                         <CoachNote />
                         {/* <ThisWeek /> */}
                     </div>
