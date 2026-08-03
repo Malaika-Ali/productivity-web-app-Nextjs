@@ -6,7 +6,8 @@ export default function TodaysPlans() {
     const { habits, toggleHabit } = useHabits()
     
     return (
-        <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-2 border-b-8 border-gray-200">
+        <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-b-8 border-r-4! border-gray-200"
+            style={{ borderRightWidth: '4px' }}>
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-gray-900 tracking-tighter">Today's plan</h2>

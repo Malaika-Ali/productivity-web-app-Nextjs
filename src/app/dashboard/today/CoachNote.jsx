@@ -9,7 +9,8 @@ export default function CoachNote() {
     const { insight, loading, refreshing, error, regenerate } = useInsights()
 
     return (
-        <div className="bg-purple-600 rounded-3xl overflow-hidden p-6 w-full text-violet-50 relative border-2 border-r-4 border-b-8 border-purple-800">
+        <div className="bg-purple-600 rounded-3xl overflow-hidden p-6 w-full text-violet-50 relative border-r-4 border-b-8 border-purple-800"
+            style={{ borderRightWidth: '4px' }}>
          
 
             <div className="relative z-10">

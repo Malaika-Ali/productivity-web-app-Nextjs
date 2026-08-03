@@ -63,13 +63,15 @@ const TaskCard = ({ task, onToggle}) => {
                   ) : (
                       <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task.preferred_time}</span>
                   )} */}
-                  <span className="text-[13px] text-gray-400 font-semibold tracking-tight">{task?.due_time
+                  <span className="text-[13px] text-gray-400 font-semibold tracking-tight">
+                    {/* {task?.due_time
                       ? (() => {
                           const { hour, minute, period } = parseTime(task.due_time)
                           return `${hour}:${minute} ${period}`
                       })()
                       : "Anytime"
-                  }</span>
+                  } */} Due Today
+                  </span>
               </div>
           </div>
   )

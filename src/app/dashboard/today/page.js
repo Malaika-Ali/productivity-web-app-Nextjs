@@ -12,7 +12,7 @@ export const metadata = {
 };
 const page = () => {
     return (
-        <div className='flex flex-col min-h-screen justify-center px-8'>
+        <div className='flex flex-col  justify-center px-6'>
             {/* <StatsCardContainer /> */}
             <TodayHeader />
             <div className=" bg-purple-50/50 flex items-start justify-center flex-wrap my-6">

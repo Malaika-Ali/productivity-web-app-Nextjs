@@ -28,8 +28,9 @@ const TodaysTasks = () => {
 
   return (
     <div className="bg-white rounded-3xl py-6 px-4 w-full 
-        border-2 border-b-8 border-gray-200">
-      <div className="flex flex-col justify-between mb-12">
+        border-r-4 border-b-8 border-gray-200"
+      style={{ borderRightWidth: '4px' }}>
+      <div className="flex flex-col justify-between">
         <h3 className="text-base font-extrabold text-gray-900">Tasks</h3>
         <div className="flex flex-col py-4 gap-2.5">
           {tasks?.map((task) => (

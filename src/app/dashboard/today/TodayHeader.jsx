@@ -49,7 +49,8 @@ function ProgressRing({ percent, size = 56, strokeWidth = 5 }) {
 
 export default function TodayHeader({
     percent = 70,
-    message = "You've hit your meditation goal 4 days early! You're on fire today.",
+    // message = "You've hit your meditation goal 4 days early! You're on fire today.",
+    message = "You've completed 1/3 habits today!",
 }) {
     return (
         <div className="flex items-center gap-4 bg-white rounded-3xl border-l-4 border-l-purple-500  px-4 py-3.5"
@@ -59,7 +60,8 @@ export default function TodayHeader({
             <div className="flex items-start gap-2.5 min-w-0 bg-primary/5  rounded-xl px-3.5 py-2.5 flex-1">
                 <Sparkles size={16} className="text-primary mt-0.5 shrink-0" />
                 <p className="text-sm font-semibold text-gray-700 leading-snug">
-                    {message}
+                    {/* {message} */}
+                    You've completed <span className="font-bold text-violet-500">1/3</span> habits today! 
                 </p>
             </div>
 
