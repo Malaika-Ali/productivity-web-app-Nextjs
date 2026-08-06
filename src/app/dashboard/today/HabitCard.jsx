@@ -42,7 +42,7 @@ const HabitCard = ({ habit, onToggle }) => {
                       className={`text-sm font-bold leading-snug ${habit.completedToday ? "line-through text-gray-400" : "text-gray-800"
                           }`}
                   >
-                      {habit.title}
+                      {habit?.title}
                   </p>
                   <p className={`text-[12px] font-extrabold mt-0.5  capitalize ${categoryColorsText[habit.category]}`}>
                       {/* {habit.meta.join(" · ")} */}

@@ -49,7 +49,7 @@ const TaskCard = ({ task, onToggle}) => {
                           className={`text-sm font-bold leading-snug ${task.completedToday ? "line-through text-gray-400" : "text-gray-800"
                               }`}
                       >
-                          {task.title}
+                          {task?.title}
                       </p>
                   </div>
               </div>
