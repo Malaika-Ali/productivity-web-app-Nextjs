@@ -19,7 +19,8 @@ export default function Navbar() {
     }, []);
 
     const pathname = usePathname();
-    const config = navbarConfig[pathname] ?? navbarConfig.default;
+    // const config = navbarConfig[pathname] ?? navbarConfig.default;
+    const config = navbarConfig[pathname] ?? navbarConfig.default ?? { title: "Dashboard" };
 
     const title = pathname === "/dashboard/today"
         ? `Good morning, ${mounted ? username ?? "" : ""}`
