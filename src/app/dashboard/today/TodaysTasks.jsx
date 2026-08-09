@@ -2,29 +2,32 @@
 import React from 'react'
 import { useEffect, useState } from "react";
 import TaskCard from './TaskCard';
+import { useTasks } from '@/hooks/useTasks';
 
 
 const TodaysTasks = () => {
 
-  const [tasks, setTasks] = useState([])
+  // const [tasks, setTasks] = useState([])
 
-  const fetchTasks = async () => {
-    try {
-      const res = await fetch("/api/tasks/today")
-      if (!res.ok) throw new Error("fetch error")
+  // const fetchTasks = async () => {
+  //   try {
+  //     const res = await fetch("/api/tasks/today")
+  //     if (!res.ok) throw new Error("fetch error")
 
-      const data = await res.json()
-      console.log("The fetched tasks list is", data.data)
-      setTasks(data.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  //     const data = await res.json()
+  //     console.log("The fetched tasks list is", data.data)
+  //     setTasks(data.data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchTasks()
-    console.log("tasks state is ", tasks)
-  }, [])
+  // useEffect(() => {
+  //   fetchTasks()
+  //   console.log("tasks state is ", tasks)
+  // }, [])
+
+  const {tasks, toggleTask} = useTasks()
 
   return (
     <div className="bg-white rounded-3xl py-6 px-4 w-full 
@@ -35,7 +38,7 @@ const TodaysTasks = () => {
         <div className="flex flex-col py-4 gap-2.5">
           {tasks?.map((task) => (
             <TaskCard task={task}
-            //  onToggle={toggleHabit} 
+             onToggle={toggleTask} 
              />
           ))}
         </div>

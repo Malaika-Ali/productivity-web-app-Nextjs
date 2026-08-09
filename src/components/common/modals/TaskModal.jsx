@@ -169,7 +169,7 @@ export default function TaskModal({ task = null, onClose, mode = "edit", onTaskU
                         type="text"
                         value={title}
                         onChange={e => setTitle(e.target.value)}
-                        placeholder={mode === "add" ? "e.g. Morning Run" : ""}
+                        placeholder={mode === "add" ? "e.g. Post on LinkedIn" : ""}
                         className="w-full px-4 py-3 rounded-xl border border-[#e0e0f0] text-gray-800 placeholder-gray-400 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
                     />
                 </div>

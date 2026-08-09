@@ -19,7 +19,7 @@ import { toast } from "sonner"
 //   title: "LogIn",
 // };
 
-export default function Page() {
+export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   

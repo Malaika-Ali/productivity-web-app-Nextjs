@@ -9,15 +9,22 @@ export async function GET(req) {
             {error: "Unauthorized Request"}, {status: 401}
         )
 
-        const today = new Date().toISOString().split('T')[0]  // "2026-07-20"
+        const today = new Date()
+        const tomorrow = new Date()
+        tomorrow.setDate(today.getDate() + 1)
+
+        const todayStr = today.toISOString().split('T')[0]
+        const tomorrowStr = tomorrow.toISOString().split('T')[0]
+
         const { data, error } = await supabase
             .from('tasks')
             .select('*')
             .eq('user_id', user.id)
-            .eq('due_date', today)
+            .gte('due_date', todayStr)
+            .lte('due_date', tomorrowStr)
         if (error) throw error
 
-        return NextResponse.json({ success: true, data})
+        return NextResponse.json({success: true, data})
     } catch (error) {
         console.log("Internal server error while fetching the tasks scheduled for today", error)
         return NextResponse.json(

@@ -1,4 +1,4 @@
-import { categoryColors, categoryColorsText } from '@/constants';
+import { categoryColorsText } from '@/constants';
 import { parseTime } from '@/lib/parseTime';
 import React from 'react'
 

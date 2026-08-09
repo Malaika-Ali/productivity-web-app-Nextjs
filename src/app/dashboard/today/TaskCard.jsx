@@ -32,6 +32,7 @@ const TaskCard = ({ task, onToggle}) => {
        
               {/* Left: checkbox + text */}
               <div className='flex items-center gap-3 min-w-0 '>
+           
               <div className={`flex w-3 h-3 rounded-full shrink-0
                 `}
                   style={{ backgroundColor: task.priority === 'high' ? '#f59e0b' : task.priority === 'medium' ? '#eab308' : '#000' }}
