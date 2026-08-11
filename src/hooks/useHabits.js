@@ -10,11 +10,11 @@ export function useHabits() {
             const res = await fetch('/api/habits/today')
             const data = await res.json()
 
-            setHabits(data.completedToday) // or whatever your GET route returns
+            setHabits(data?.completedToday) // or whatever your GET route returns
 
             // Build the initial completedIds Set from the fetched data
             const initialCompleted = new Set(
-                data.completedToday
+                data?.completedToday
                     .filter(h => h.completedToday)
                     .map(h => h.id)
             )

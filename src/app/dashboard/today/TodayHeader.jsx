@@ -57,7 +57,7 @@ export default function TodayHeader({
             style={{ borderLeftColor: 'oklch(62.7% 0.265 303.9)' }}>
            
 
-            <div className="flex items-start gap-2.5 min-w-0 bg-primary/5  rounded-xl px-3.5 py-2.5 flex-1">
+            <div className="flex items-start gap-2.5 min-w-0  rounded-xl px-3.5 py-2.5 flex-1">
                 <Sparkles size={16} className="text-primary mt-0.5 shrink-0" />
                 <p className="text-sm font-semibold text-gray-700 leading-snug">
                     {/* {message} */}

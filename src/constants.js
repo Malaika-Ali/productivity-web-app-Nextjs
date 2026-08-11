@@ -26,7 +26,7 @@ export const categoryColorsText = {
 }
 
 export const PriorityIndicators={
-    high: "bg-amber-500",
+    high: "bg-red-500",
     medium: "bg-yellow-500",
     low: "bg-black"
 }

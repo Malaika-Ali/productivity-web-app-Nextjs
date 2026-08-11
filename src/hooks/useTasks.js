@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 
 export function useTasks(){
     const [tasks, setTasks] = useState([])
-    // const [completedIds, setCompletedIds] = useState(new Set())
     const [loading, setLoading] = useState(true)
 
     useEffect(()=>{
