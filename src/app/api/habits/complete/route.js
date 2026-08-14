@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
+import { IncrementStreak } from "./compute_streak/route";
 
 export async function POST(req) {
     try {
@@ -50,7 +51,12 @@ export async function DELETE(req) {
             .eq('completed_on', today)
 
         if (error) throw error
-        return NextResponse.json({ success: true }, { status: 200 })
+
+        const {current_streak} = await IncrementStreak(supabase, habitId, user.id)
+
+        console.log('The current streak is', current_streak)
+
+        return NextResponse.json({ success: true, current_streak }, { status: 200 })
 
     } catch (error) {
         console.error('DELETE /api/habits/complete error:', error)
