@@ -34,12 +34,15 @@ export async function IncrementStreak(supabase, habitId, userId) {
 
     let wasPreviousDayCompleted = false
     if (prevScheduledDate) {
-        const { data: prevCompletion } = await supabase
-            .from('habit_completion')
+        const { data: prevCompletion, error: streakUpdateError } = await supabase
+            .from('habit_completions')
             .select('id')
             .eq('habit_id', habitId)
             .eq('completed_on', prevScheduledDate)
             .maybeSingle()
+
+        if (streakUpdateError) throw streakUpdateError
+
         if (prevCompletion) wasPreviousDayCompleted = true
     }
 
@@ -59,23 +62,23 @@ export async function IncrementStreak(supabase, habitId, userId) {
 
 }
 
-export async function decrementStreak(supabase, habitId, userId){
-    const {data:habit, error:habitError}=await supabase
-    .from('habits')
-    .select('target_days, current_streak, longest_streak')
-    .eq('id', habitId)
-    .eq('user_id', userId)
-    .single()
-    if(habitError) throw habitError
+export async function decrementStreak(supabase, habitId, userId) {
+    const { data: habit, error: habitError } = await supabase
+        .from('habits')
+        .select('target_days, current_streak, longest_streak')
+        .eq('id', habitId)
+        .eq('user_id', userId)
+        .single()
+    if (habitError) throw habitError
 
-    const todayIndex=new Date().getDay()
+    const todayIndex = new Date().getDay()
     // Wasn't a scheduled day, so incrementStreak never touched the counter so nothing to reverse
-    if(!habit.target_days?.includes(todayIndex)){
-        return {current_streak: habit.current_streak, longest_streak: habit.longest_streak}
+    if (!habit.target_days?.includes(todayIndex)) {
+        return { current_streak: habit.current_streak, longest_streak: habit.longest_streak }
     }
 
     const newStreak = Math.max(0, habit.current_streak - 1)
-    const newLongestStreak= Math.max(newStreak, (habit.longest_streak-1) || 0)
+    const newLongestStreak = Math.max(newStreak, (habit.longest_streak - 1) || 0)
 
     const { error: updateError } = await supabase
         .from('habits')
@@ -84,5 +87,5 @@ export async function decrementStreak(supabase, habitId, userId){
         .eq('user_id', userId)
     if (updateError) throw updateError
 
-    return { current_streak: newStreak , longest_streak: newLongestStreak}
+    return { current_streak: newStreak, longest_streak: newLongestStreak }
 }
