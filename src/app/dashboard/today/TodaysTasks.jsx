@@ -13,7 +13,10 @@ const TodaysTasks = () => {
       <div className="flex flex-col justify-between">
         <h3 className="text-base font-extrabold text-gray-900">Tasks</h3>
         <div className="flex flex-col py-4 gap-2.5">
-          {tasks?.map((task) => (
+          {tasks.length==0 ? 
+          <p className='text-[13px] text-center text-gray-500'>No tasks scheduled for today</p>
+          :
+          tasks?.map((task) => (
             <TaskCard task={task}
              onToggle={toggleTask} 
              />

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Check, Pencil, Trash2 } from "lucide-react";
 import TaskModal from "@/components/common/modals/TaskModal";
+import TaskCard from "./TaskCard";
 
 const initialTasks = [
     {
@@ -39,12 +40,12 @@ const initialTasks = [
     },
 ];
 
+
 const badgeStyles = {
     rose: "bg-rose-50 text-rose-500",
     amber: "bg-amber-50 text-amber-600",
     violet: "bg-violet-50 text-violet-500",
 };
-
 function SectionHeader({ label, count }) {
     return (
         <div className="flex items-center justify-between mb-3">
@@ -153,7 +154,7 @@ export default function TasksPage() {
                     <SectionHeader label="TODAY" count={today.length} />
                     <div className="flex flex-col gap-2.5">
                         {today.map((task) => (
-                            <TaskRow
+                            <TaskCard
                                 key={task.id}
                                 task={task}
                                 onToggle={toggleTask}

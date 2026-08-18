@@ -18,7 +18,9 @@ export default function TodaysPlans() {
 
             {/* Hbaits list */}
             <div className="flex flex-col gap-2.5">
-                {habits.map((habit) => (
+                {habits.length == 0 ? 
+                    <p className='text-[13px] text-center text-gray-500'>No habits scheduled for today</p>
+                : habits.map((habit) => (
                     <HabitCard key={habit.id} habit={habit} onToggle={toggleHabit} />
                 ))}
             </div>
