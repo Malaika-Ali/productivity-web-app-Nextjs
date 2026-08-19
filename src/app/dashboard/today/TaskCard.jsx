@@ -2,7 +2,8 @@ import React from 'react'
 function CheckIcon({ done, active }) {
     if (done) {
         return (
-            <div className="w-6 h-6 rounded-md bg-violet-400 flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-md bg-violet-400 flex items-center justify-center shrink-0 "
+           >
                 <svg width="13" height="20" viewBox="0 0 13 13" fill="none">
                     <path d="M2 6.5l3.5 3.5L11 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -45,7 +46,8 @@ const TaskCard = ({ task, onToggle}) => {
   return (
      <div
               key={task.id}
-              className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all  ${task.completedToday ? "bg-gray-100" : ""} ${task.active
+              className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all duration-200 ease-in-out 
+                 ${task.completedToday ? "bg-gray-100" : ""} ${task.active
                   ? "border-purple-500 bg-white shadow-[0_0_0_1px_rgba(168,85,247,0.2)] border-2"
                   : "border-gray-100 bg-gray-50/60"
                   }`}

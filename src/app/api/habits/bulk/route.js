@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
-import { success } from "zod/v4-mini";
 
 export async function POST(req) {
     try {

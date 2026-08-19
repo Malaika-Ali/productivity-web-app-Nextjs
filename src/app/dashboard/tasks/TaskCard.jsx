@@ -7,6 +7,18 @@ const badgeStyles = {
     violet: "bg-violet-50 text-violet-500",
 };
 
+function CheckIcon({ done, active }) {
+    if (done) {
+        return (
+            <div className="w-6 h-6 rounded-md bg-violet-400 flex items-center justify-center shrink-0 "
+            >
+                <svg width="13" height="20" viewBox="0 0 13 13" fill="none">
+                    <path d="M2 6.5l3.5 3.5L11 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            </div>
+        );
+    }}
+
 const TaskCard = ({ task, onToggle, onDelete }) => {
     const { title, done, badge } = task;
 
@@ -14,8 +26,8 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
     
   return (
       <div
-          className={`group flex items-center justify-between gap-3 rounded-xl border bg-white pl-3 pr-3 py-3 sm:pl-4 sm:pr-4 transition-colors
-        ${done ? "border-l-4 border-l-rose-400 border-y-gray-100 border-r-gray-100" : "border-l-4 border-l-transparent border-gray-100"}
+          className={`group flex items-center justify-between gap-3 rounded-xl border bg-white pl-3 pr-3 py-4 sm:pl-4 sm:pr-4 shadow-sm border-[#ebebf8] transition-colors
+        ${done ? "border-l-4 border-l-purple-500 border-y-gray-100 border-r-gray-100" : "border-l-4 border-l-transparent border-gray-100"}
       `}
       >
           {/* Left: checkbox + title */}
