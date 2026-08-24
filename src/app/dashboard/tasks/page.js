@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback } from "react";
-import { Check, Pencil, Trash2 } from "lucide-react";
 import TaskModal from "@/components/common/modals/TaskModal";
 import TaskCard from "./TaskCard";
+import { useAllTasks } from "@/hooks/useAllTasks";
 
 const badgeStyles = {
     rose: "bg-rose-50 text-rose-500",
@@ -26,44 +26,10 @@ function SectionHeader({ label, count }) {
 
 
 export default function TasksPage() {
-    const PAGE_SIZE = 10
-    const [tasks, setTasks] = useState([]);
+    const { tasks, toggleTask, deleteTask, hasMore, loading, loadingMore, seeMore } = useAllTasks()
+    
     const [showAddModal, setShowAddModal] = useState(false)
-    const [offset, setOffset] = useState(0)
-    const [hasMore, setHasMore] = useState(true)
-    const [loading, setLoading] = useState(true)      
-    const [loadingMore, setLoadingMore] = useState(false) // "See More" click specifically — separate state so
-    // the whole list doesn't show a loading skeleton again
 
-    const fetchPage = useCallback(async (currentOffset, isInitial) => {
-        isInitial ? setLoading(true) : setLoadingMore(true)
-        try {
-            const res = await fetch(`/api/tasks/bulk?limit=${PAGE_SIZE}&offset=${currentOffset}`)
-            const result = await res.json()
-            if (!res.ok) throw new Error(result.error)
-
-            setTasks(prev => isInitial ? result.data : [...prev, ...result.data]) // <- the actual "See More" behavior:
-            //    append instead of replace
-            setHasMore(result.hasMore)
-            setOffset(currentOffset + result.data.length)
-        } finally {
-            isInitial ? setLoading(false) : setLoadingMore(false)
-        }
-    }, [])
-
-    useEffect(() => {
-        fetchPage(0, true)
-    }, [fetchPage])
-
-    function seeMore() {
-        if (!hasMore || loadingMore) return
-        fetchPage(offset, false)
-    }
-    // function toggleTask(id) {
-    //     setTasks((prev) =>
-    //         prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
-    //     );
-    // }
 
     // function deleteTask(id) {
     //     setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -105,7 +71,7 @@ export default function TasksPage() {
                             <TaskCard
                                 key={task.id}
                                 task={task}
-                                // onToggle={toggleTask}
+                                onToggle={toggleTask}
                                 // onDelete={deleteTask}
                             />
                         ))}

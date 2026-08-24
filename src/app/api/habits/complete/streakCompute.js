@@ -48,9 +48,9 @@ export async function IncrementStreak(supabase, habitId, userId) {
 
 
     const newStreak = wasPreviousDayCompleted ? habit.current_streak + 1 : 1
-    const newLongest = Math.max(newStreak, (habit.longest_streak + 1) || 0)
+    const newLongest = Math.max(newStreak, (habit.longest_streak) || 0)
 
-    const { data: updated, streakUpdateError } = await supabase
+    const { data: updated, error:streakUpdateError } = await supabase
         .from('habits')
         .update({ current_streak: newStreak, longest_streak: newLongest })
         .eq('id', habitId)
@@ -78,7 +78,7 @@ export async function decrementStreak(supabase, habitId, userId) {
     }
 
     const newStreak = Math.max(0, habit.current_streak - 1)
-    const newLongestStreak = Math.max(newStreak, (habit.longest_streak - 1) || 0)
+    const newLongestStreak = Math.max(newStreak, (habit.longest_streak) || 0)
 
     const { error: updateError } = await supabase
         .from('habits')

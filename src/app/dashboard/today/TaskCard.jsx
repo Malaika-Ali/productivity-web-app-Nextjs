@@ -1,3 +1,5 @@
+import TaskPriorityIndicator from '@/components/taskPriorityIndicator/TaskPriorityIndicator';
+import { getDueLabel } from '@/lib/parseTime';
 import React from 'react'
 function CheckIcon({ done, active }) {
     if (done) {
@@ -18,30 +20,6 @@ function CheckIcon({ done, active }) {
     );
 }
 
-function toLocalDateString(date) {
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, "0")
-    const d = String(date.getDate()).padStart(2, "0")
-    return `${y}-${m}-${d}`
-}
-
-function getDueLabel(dueDate) {
-    if (!dueDate) return "No due date"
-
-    const today = new Date()
-    const tomorrow = new Date()
-    tomorrow.setDate(today.getDate() + 1)
-
-    const todayStr = toLocalDateString(today)
-    const tomorrowStr = toLocalDateString(tomorrow)
-
-    if (dueDate === todayStr) return "Due Today"
-    if (dueDate === tomorrowStr) return "Due Tomorrow"
-
-    // Fallback for anything outside the today/tomorrow window (e.g. overdue)
-    return new Date(dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-}
-
 const TaskCard = ({ task, onToggle}) => {
   return (
      <div
@@ -56,12 +34,7 @@ const TaskCard = ({ task, onToggle}) => {
               {/* Left: checkbox + text */}
               <div className='flex items-center gap-3 min-w-0 '>
            
-              <div className={`flex w-3 h-3 rounded-full shrink-0
-               `}
-                  style={{ backgroundColor: task?.priority === 'high' ? '#fb2c36' : task?.priority === 'medium' ? '#eab308' : 'oklch(72.3% 0.219 149.579)' }}
-                  >
-                    
-                  </div>
+         <TaskPriorityIndicator task={task}/>
                   <button
                       onClick={() => onToggle(task.id, task.completedToday)}
                       className="cursor-pointer"

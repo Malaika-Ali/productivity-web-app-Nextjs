@@ -27,3 +27,25 @@ export function parseTime(timeStr) {
 
     return { hour: "07", minute: "30", period: "AM" }
 }
+
+export function toLocalDateString(date) {
+    const y = date.getFullYear(), m = String(date.getMonth() + 1).padStart(2, "0"), d = String(date.getDate()).padStart(2, "0")
+    return `${y}-${m}-${d}`
+}
+
+export function getDueLabel(dueDate) {
+    if (!dueDate) return "No due date"
+
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1)
+
+    const todayStr = toLocalDateString(today)
+    const tomorrowStr = toLocalDateString(tomorrow)
+
+    if (dueDate === todayStr) return "Due Today"
+    if (dueDate === tomorrowStr) return "Due Tomorrow"
+
+    // Fallback for anything outside the today/tomorrow window (e.g. overdue)
+    return new Date(dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+}

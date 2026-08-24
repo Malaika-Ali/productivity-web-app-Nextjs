@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/serverClient";
 import { decrementStreak, IncrementStreak } from "./streakCompute";
+import { toLocalDateString } from "@/lib/parseTime";
 
 export async function POST(req) {
     try {
@@ -11,8 +12,8 @@ export async function POST(req) {
         const { habitId } = await req.json()
         if (!habitId) return NextResponse.json({ error: 'habitId is required' }, { status: 400 })
 
-        const today = new Date().toISOString().split('T')[0]
-
+        const today = toLocalDateString(new Date())
+        
         const { data, error } = await supabase
             .from('habit_completions')
             .insert({
@@ -44,7 +45,7 @@ export async function DELETE(req) {
         const { habitId } = await req.json()
         if (!habitId) return NextResponse.json({ error: 'habitId is required' }, { status: 400 })
 
-        const today = new Date().toISOString().split('T')[0]
+        const today = toLocalDateString(new Date())
 
         const { error } = await supabase
             .from('habit_completions')
