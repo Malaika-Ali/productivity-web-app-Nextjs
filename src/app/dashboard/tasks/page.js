@@ -1,14 +1,10 @@
 'use client'
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import TaskModal from "@/components/common/modals/TaskModal";
 import TaskCard from "./TaskCard";
 import { useAllTasks } from "@/hooks/useAllTasks";
+import ButtonWithIcon from "@/components/common/buttons/ButtonWithIcon";
 
-const badgeStyles = {
-    rose: "bg-rose-50 text-rose-500",
-    amber: "bg-amber-50 text-amber-600",
-    violet: "bg-violet-50 text-violet-500",
-};
 function SectionHeader({ label, count }) {
     return (
         <div className="flex items-center justify-between mb-3">
@@ -30,7 +26,6 @@ export default function TasksPage() {
     
     const [showAddModal, setShowAddModal] = useState(false)
 
-
     // function deleteTask(id) {
     //     setTasks((prev) => prev.filter((t) => t.id !== id));
     // }
@@ -43,21 +38,6 @@ export default function TasksPage() {
         window.addEventListener('open-add-task', handleAddTask)
         return () => window.removeEventListener('open-add-task', handleAddTask)
     }, [])
-
-
-    // const fetchTasks= async ()=>{
-    //   try {
-    //       const res= await fetch('/api/tasks/bulk')
-    //       const data=await res.json()
-    //       setTasks(data)
-    //   } catch (error) {
-    //     console.log("Error while fetching tasks from backend", error)
-    //   }
-    // }
-
-    // useEffect(()=>{
-    //     fetchTasks()
-    // },[])
 
     return (
         <div className="w-full min-h-screen flex justify-center px-3 py-2">
@@ -72,18 +52,20 @@ export default function TasksPage() {
                                 key={task.id}
                                 task={task}
                                 onToggle={toggleTask}
-                                // onDelete={deleteTask}
+                                onDelete={deleteTask}
                             />
                         ))}
                     </div>
                     {hasMore && (
-                        <button
+                        <div className="flex justify-center items-center py-6">
+                        <ButtonWithIcon
                             onClick={seeMore}
                             disabled={loadingMore}
-                            className="mt-2 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 cursor-pointer disabled:opacity-50"
-                        >
-                            {loadingMore ? "Loading..." : "See More"}
-                        </button>
+                            // className="mt-2 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 cursor-pointer disabled:opacity-50"
+                            text={loadingMore ? "Loading..." : "See More"}
+
+                        />
+                        </div>
                     )}
                 </section>
 
@@ -93,24 +75,7 @@ export default function TasksPage() {
                         mode="add"
                         onClose={() => setShowAddModal(false)} />
                 }
-
-                {/* {upcoming.length > 0 && (
-                    <section>
-                        <SectionHeader label="UPCOMING" />
-                        <div className="flex flex-col gap-2.5">
-                            {upcoming.map((task) => (
-                                <TaskCard
-                                    key={task.id}
-                                    task={task}
-                                    onToggle={toggleTask}
-                                    onDelete={deleteTask}
-                                />
-                            ))}
-                        </div>
-                    </section>
-                )} */}
             </div>
         </div>
     );
-
 }

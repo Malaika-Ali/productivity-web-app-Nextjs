@@ -1,4 +1,4 @@
-function CheckIcon({ done, active }) {
+export function CheckIcon({ done, active }) {
     if (done) {
         return (
             <div className="w-6 h-6 rounded-full bg-violet-400 flex items-center justify-center shrink-0">
