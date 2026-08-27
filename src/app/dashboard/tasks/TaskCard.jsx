@@ -3,25 +3,13 @@ import { Check, Pencil, Trash2 } from "lucide-react";
 import TaskPriorityIndicator from '@/components/taskPriorityIndicator/TaskPriorityIndicator';
 import { getDueLabel } from '@/lib/parseTime';
 import ConfirmDelete from '@/components/common/modals/ConfirmDelete';
-
-function CheckIcon({ done, active }) {
-    if (done) {
-        return (
-            <div className="w-6 h-6 rounded-md bg-violet-400 flex items-center justify-center shrink-0 "
-            >
-                <svg width="13" height="20" viewBox="0 0 13 13" fill="none">
-                    <path d="M2 6.5l3.5 3.5L11 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            </div>
-        );
-    }
-}
+import { CheckIcon } from '@/components/common/icons/CheckIconTask';
+import TaskModal from '@/components/common/modals/TaskModal';
 
 const TaskCard = ({ task, onToggle, onDelete }) => {
     const { title, done, badge } = task;
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
-
-
+    const [isOpenEditModal, setIsOpenEditModal] = useState(false)
 
     return (
         <div
@@ -29,8 +17,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
             
         transition-all duration-300 ease-linear cursor-pointer 
         ${task.status == "completed" ? "  hover:border-l-gray-300 border-y-gray-100 border-r-gray-100 bg-violet-100" : "hover:border-l-purple-500 border-l-transparent border-gray-100 bg-white"}
-      `}
-        >
+      `}>
             {/* Left: checkbox + title */}
             <div className="flex items-center gap-3 min-w-0">
                 <TaskPriorityIndicator task={task} />
@@ -39,11 +26,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
                     aria-label={done ? "Mark task incomplete" : "Mark task complete"}
                     className={`
                     shrink-0 w-5 h-5 rounded-md flex items-center justify-center transition-colors 
-                    cursor-pointer
-            ${task.status == "completed" ? "bg-blue-500" : "border-2 border-gray-300 hover:border-blue-400"}
-          `}
-                >
-                    {/* {done && <Check size={12} strokeWidth={3} className="text-white" />} */}
+                    cursor-pointer border-2 border-gray-300`}>
                     <CheckIcon done={task?.status == "completed"} active={task.active} />
 
                 </button>
@@ -76,6 +59,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
                 {!done && (
                     <div className="hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
+                        onClick={()=>setIsOpenEditModal(true)}
                             aria-label="Edit task"
                             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-pointer"
                         >
@@ -94,6 +78,12 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
             </div>
             {isOpenDeleteModal &&
                 <ConfirmDelete stuffName="task" onClose={() => setIsOpenDeleteModal(false)} onDelete={onDelete} id={task.id} />}
+            {isOpenEditModal &&
+              <TaskModal
+              mode="edit"
+              task={task}
+              onClose={()=>setIsOpenEditModal(false)}
+                 />}
         </div>
     )
 }

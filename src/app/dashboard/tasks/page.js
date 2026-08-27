@@ -26,13 +26,6 @@ export default function TasksPage() {
     
     const [showAddModal, setShowAddModal] = useState(false)
 
-    // function deleteTask(id) {
-    //     setTasks((prev) => prev.filter((t) => t.id !== id));
-    // }
-
-    // const today = tasks.filter((t) => t.section === "today");
-    // const upcoming = tasks.filter((t) => t.section === "upcoming");
-
     useEffect(() => {
         function handleAddTask() { setShowAddModal(true) }
         window.addEventListener('open-add-task', handleAddTask)
@@ -52,7 +45,7 @@ export default function TasksPage() {
                                 key={task.id}
                                 task={task}
                                 onToggle={toggleTask}
-                                onDelete={deleteTask}
+                                onDelete={()=>deleteTask(task.id)}
                             />
                         ))}
                     </div>
@@ -61,7 +54,6 @@ export default function TasksPage() {
                         <ButtonWithIcon
                             onClick={seeMore}
                             disabled={loadingMore}
-                            // className="mt-2 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 cursor-pointer disabled:opacity-50"
                             text={loadingMore ? "Loading..." : "See More"}
 
                         />
