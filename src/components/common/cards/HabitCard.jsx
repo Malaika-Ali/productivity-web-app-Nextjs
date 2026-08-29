@@ -39,10 +39,6 @@ export function HabitCard({ habit, onToggle, onDelete, onHabitUpdated }) {
             </span>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="flex items-center gap-1 text-xs font-semibold bg-orange-50 text-orange-500 px-2.5 py-1 rounded-full">
-                🔥 {habit.current_streak} days
-              </span>
-
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
@@ -51,7 +47,6 @@ export function HabitCard({ habit, onToggle, onDelete, onHabitUpdated }) {
                   <MoreVertical size={16} />
                 </button>
 
-                {/* ✅ dropdown is INSIDE the relative div, positioned correctly */}
                 {menuOpen && (
                   <div className="absolute right-0 top-8 bg-white border border-gray-100 rounded-xl shadow-lg z-20 py-1 w-32">
                     <button
@@ -78,36 +73,15 @@ export function HabitCard({ habit, onToggle, onDelete, onHabitUpdated }) {
           </div>
         </div>
 
-        {/* Completion rate */}
-        <div>
-          <div className="flex justify-between items-center mb-1.5">
-            <span className="text-xs text-gray-400">Completion Rate</span>
-            <span className="text-xs font-bold text-[#4f46e5]">{habit.completionRate}%</span>
-          </div>
-          <div className="h-1.5 bg-[#ebebf8] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#4f46e5] rounded-full transition-all duration-500"
-              style={{ width: `${habit.completionRate}%` }}
-            />
-          </div>
-        </div>
-
         {/* Bottom row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-gray-400">
             <Calendar size={13} />
             <span className="text-xs">{habit.frequency}</span>
           </div>
-          <button
-            onClick={() => onToggle(habit.id)}
-            className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-1.5 rounded-lg transition-all
-              ${habit.done
-                ? "bg-[#4f46e5] text-white"
-                : "bg-[#f0f0ff] text-[#4f46e5] hover:bg-[#e0e0fa]"
-              }`}
-          >
-            {habit.done ? (<>Done <CheckCircle2 size={15} /></>) : "Complete"}
-          </button>
+          <span className="flex items-center gap-1 text-xs font-semibold bg-orange-50 text-orange-500 px-2.5 py-1 rounded-full">
+            🔥 {habit.current_streak} days
+          </span>
         </div>
       </div>
 
