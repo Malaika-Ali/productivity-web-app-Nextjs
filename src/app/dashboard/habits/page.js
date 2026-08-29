@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Circle } from "lucide-react"
 import { HabitCard } from "@/components/common/cards/HabitCard"
 import HabitModal from "@/components/common/modals/HabitModal"
+import HeatMap from "@/components/heatMap/HeatMap"
 
 // Generate a 5-row x ~26-col heatmap grid (≈ last 3 months)
 function generateHeatmap() {
@@ -131,43 +132,10 @@ export default function HabitsPage() {
         )}
 
         {/* Heatmap */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#ebebf8]">
-          <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Last 3 Months Activity</h2>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <span>Less</span>
-              {heatmapColors.map((c, i) => (
-                <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
-              ))}
-              <span>More</span>
-            </div>
-          </div>
+  
 
-          {/* Grid */}
-          <div className="overflow-x-auto">
-            <div className="flex flex-col gap-1 min-w-[340px]">
-              {heatmapData.map((row, ri) => (
-                <div key={ri} className="flex gap-1">
-                  {row.map((level, ci) => (
-                    <div
-                      key={ci}
-                      className={`w-3 h-3 rounded-sm flex-shrink-0 ${heatmapColors[level]}`}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
+<HeatMap/>
 
-            {/* Month labels */}
-            <div className="flex justify-between mt-3 text-xs text-gray-400 min-w-[340px]">
-              <span>May</span>
-              <span>June</span>
-              <span>July</span>
-            </div>
-          </div>
-        </div>
 
       </main>
 
