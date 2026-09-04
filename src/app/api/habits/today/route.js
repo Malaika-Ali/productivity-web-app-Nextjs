@@ -25,7 +25,6 @@ export async function GET(req) {
             habit.target_days?.includes(todayDayIndex)
         )
 
-        console.log("Todays habits are", todaysHabits)
         const completedToday = todaysHabits.map(habit => ({
             ...habit,
             completedToday: habit.habit_completions.some(log => log.completed_on === today)

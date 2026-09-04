@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import SocialLoginButton from "@/components/common/auth/SocialLoginButton";
 import OrDivider from "@/components/common/auth/OrDivider";
 import AuthFormField from "@/components/common/auth/AuthFormField";
@@ -14,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
+import AuthButton from "@/components/common/auth/AuthButton";
 
 // export const metadata = {
 //   title: "LogIn",
@@ -22,7 +22,7 @@ import { toast } from "sonner"
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const router = useRouter();
 
   const loginSchema = z.object({
@@ -50,17 +50,17 @@ export default function LoginPage() {
       toast.success("Successfully Logged In")
       const ses = await supabase.auth.getSession()
       // console.log("session ifo:", ses)
-      const user_id=ses.data.session.user.id
+      const user_id = ses.data.session.user.id
       // console.log("user id", user_id)
       const res = await supabase
-        .from('profiles')          
-        .select('onboarding_completed')               
-        .eq('id', user_id) 
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('id', user_id)
         .single()
-        const isOnBoarded=res.data.onboarding_completed
-        // console.log("is onboarded", isOnBoarded)
-      if(isOnBoarded) {router.push("/dashboard/today")}
-        else{router.push("/onboarding")}
+      const isOnBoarded = res.data.onboarding_completed
+      // console.log("is onboarded", isOnBoarded)
+      if (isOnBoarded) { router.push("/dashboard/today") }
+      else { router.push("/onboarding") }
     } catch (error) {
       console.log("Login failed: ", error.message)
       toast.error(`login Failed: ${error.message}`)
@@ -147,12 +147,11 @@ export default function LoginPage() {
             )}
 
             {/* Submit */}
-            <Button
-              type="submit"
-              className="w-full h-12 rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide shadow-md shadow-purple-200 transition-all mt-1 cursor-pointer"
-            >
-              Log in
-            </Button>
+            <AuthButton 
+            isLoading={isLoading} 
+            normalText="Log In" 
+            loadingText="Logging In..." />
+
           </form>
 
           {/* Sign up link */}

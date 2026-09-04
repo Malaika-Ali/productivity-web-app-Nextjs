@@ -49,8 +49,8 @@ export default function CoachNote() {
             {!loading && !error && insight && (
                 <div className="flex flex-col gap-4">
                     <p className="text-sm leading-relaxed text-purple-100 z-100 mb-5">
-                        {/* {insight.summary} */}
-                        You have kept the morning run for 12 days, that's great. I noticed reading slips after 9 PM, so try to move it to 10 AM.
+                        {insight.insight}
+                        {/* You have kept the morning run for 12 days, that's great. I noticed reading slips after 9 PM, so try to move it to 10 AM. */}
                     </p>
 {/* suggestions */}
                     {/* <div className="flex flex-col gap-2.5">

@@ -1,200 +1,271 @@
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+const GEMINI_URL =
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-
-// const RESPONSE_SCHEMA = {
-//     type: "OBJECT",
-//     properties: {
-//         summary: {
-//             type: "STRING",
-//             description: "A warm, specific 2-3 sentence summary of the user's week, referencing real numbers and habit/task names from the data.",
-//         },
-//         suggestions: {
-//             type: "ARRAY",
-//             items: { type: "STRING" },
-//             minItems: 2,
-//             maxItems: 3,
-//             description: "2-3 concrete, specific suggestions for next week, each one sentence, referencing specific habits/tasks by name where relevant.",
-//         },
-//     },
-//     required: ["summary", "suggestions"],
-// }
-
-// export async function generateInsight(stats) {
-//     const prompt = buildPrompt(stats)
-
-//     const res = await fetch(`${GEMINI_URL}?key=${process.env.GEMINI_API_KEY}`, {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({
-//             contents: [{ parts: [{ text: prompt }] }],
-//             generationConfig: {
-//                 responseMimeType: "application/json",
-//                 responseSchema: RESPONSE_SCHEMA,
-//                 temperature: 0.7,
-//             },
-//         }),
-//     })
-
-//     if (!res.ok) {
-//         const errText = await res.text()
-//         throw new Error(`Gemini API error (${res.status}): ${errText}`)
-//     }
-
-//     const data = await res.json()
-//     const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text
-//     if (!rawText) throw new Error("Gemini returned no content")
-
-//     const parsed = JSON.parse(rawText) // safe: responseSchema guarantees valid JSON matching the shape above
-
-//     if (!parsed.summary || !Array.isArray(parsed.suggestions)) {
-//         throw new Error("Gemini response did not match expected shape")
-//     }
-
-//     return parsed
-// }
-
-// function buildPrompt(stats) {
-//     const { habits, tasks, windowStart, windowEnd } = stats
-
-//     const habitLines = habits.list.length
-//         ? habits.list.map(h =>
-//             `- "${h.title}" (${h.category}): ${h.completed}/${h.scheduled} completed this week` +
-//             (h.completionRate !== null ? ` (${h.completionRate}%)` : " (not scheduled this week)") +
-//             `, current streak ${h.current_streak}, longest streak ${h.longest_streak}`
-//         ).join("\n")
-//         : "No habits tracked yet."
-
-//     const taskLines = tasks.total > 0
-//         ? `${tasks.completed}/${tasks.total} tasks completed (${tasks.completionRate}%), ${tasks.overdue} overdue.` +
-//         (tasks.byPriority.length
-//             ? " Breakdown by priority: " + tasks.byPriority.map(p => `${p.priority}: ${p.completed}/${p.total}`).join(", ")
-//             : "")
-//         : "No tasks due this week."
-
-//     return `You are a supportive, insightful habit and productivity coach writing a personalized weekly recap for a user of a habit-tracking app called Habitrea AI.
-
-// Here is their data for ${windowStart} to ${windowEnd}:
-
-// HABITS:
-// ${habitLines}
-// Overall habit completion rate: ${habits.overallCompletionRate !== null ? habits.overallCompletionRate + "%" : "N/A"}
-// ${habits.bestDay ? `Strongest day: ${habits.bestDay.day} (${habits.bestDay.rate}% completion)` : ""}
-// ${habits.weakestDay ? `Weakest day: ${habits.weakestDay.day} (${habits.weakestDay.rate}% completion)` : ""}
-
-// TASKS:
-// ${taskLines}
-
-// Write a short, warm, specific summary of their week (2-3 sentences) that references real numbers and actual habit/task names from the data above — not generic encouragement. Then give 2-3 concrete, actionable suggestions for next week, each grounded in a specific pattern from the data (e.g. a weak day, a low-performing habit, overdue tasks). Avoid clichés like "keep up the great work" without specifics. Do not use markdown formatting in the text — plain sentences only. If there isn't enough data yet, be honest and encouraging about that rather than inventing patterns.`
-// }
-
-
-// const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-
-// Forces Gemini to return exactly this shape — no markdown fences, no free text
-// wrapping the JSON, no risk of the response being unparseable.
 const RESPONSE_SCHEMA = {
     type: "OBJECT",
     properties: {
-        summary: {
+        insight: {
             type: "STRING",
-            description: "EXACTLY ONE sentence, max 25 words. States the single most important number or fact from the week — not a general overview.",
+            description:
+                "A concise behavioral insight in 1-2 sentences based only on the provided data.",
         },
-        suggestions: {
-            type: "ARRAY",
-            items: { type: "STRING" },
-            minItems: 2,
-            maxItems: 2,
-            description: "EXACTLY 2 suggestions, each ONE short sentence (max 20 words), each naming a specific habit/task and a specific action — no reasoning or justification clauses.",
+        recommendation: {
+            type: "STRING",
+            description:
+                "One concrete and practical action based on the selected pattern.",
+        },
+        selectedPatternIndex: {
+            type: "INTEGER",
+            description:
+                "The zero-based index of the selected pattern.",
         },
     },
-    required: ["summary", "suggestions"],
+    required: [
+        "insight",
+        "recommendation",
+        "selectedPatternIndex",
+    ],
 }
 
-export async function generateInsight(stats) {
-    const prompt = buildPrompt(stats)
+export async function generateInsight(patterns) {
+    if (!patterns || patterns.length === 0) {
+        return {
+            insight:
+                "There is not enough activity data yet to identify a reliable behavioral pattern.",
+            recommendation:
+                "Keep logging your habits consistently so Habitrea can identify useful patterns.",
+            selectedPatternIndex: null,
+            selectedPattern: null,
+        }
+    }
 
-    const res = await fetch(`${GEMINI_URL}?key=${process.env.GEMINI_API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: RESPONSE_SCHEMA,
-                temperature: 0.6,
-                // maxOutputTokens: 200,
-                maxOutputTokens: 300,
-                thinkingConfig: {
-                    thinkingBudget: 0
-                }
+    const prompt = buildPrompt(patterns)
+
+    const apiKey = process.env.GEMINI_API_KEY
+
+    if (!apiKey) {
+        throw new Error(
+            "GEMINI_API_KEY is not configured"
+        )
+    }
+
+    const response = await fetch(
+        `${GEMINI_URL}?key=${apiKey}`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
             },
-        }),
-    })
 
-    if (!res.ok) {
-        const errText = await res.text()
-        throw new Error(`Gemini API error (${res.status}): ${errText}`)
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: prompt,
+                            },
+                        ],
+                    },
+                ],
+
+                generationConfig: {
+                    responseMimeType:
+                        "application/json",
+
+                    responseSchema:
+                        RESPONSE_SCHEMA,
+
+                    temperature: 0.3,
+
+                    maxOutputTokens: 1000,
+                },
+            }),
+        }
+    )
+
+    if (!response.ok) {
+        const errorText =
+            await response.text()
+
+        throw new Error(
+            `Gemini API error (${response.status}): ${errorText}`
+        )
     }
 
-    const data = await res.json()
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text
-    console.log("The raw Gemini response is", rawText)
-    if (!rawText) throw new Error("Gemini returned no content")
+    const data = await response.json()
 
-    const parsed = JSON.parse(rawText) // safe: responseSchema guarantees valid JSON matching the shape above
+    const rawText =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text
 
-    if (!parsed.summary || !Array.isArray(parsed.suggestions)) {
-        throw new Error("Gemini response did not match expected shape")
+    console.log(
+        "Gemini finish reason:",
+        data?.candidates?.[0]?.finishReason
+    )
+
+    console.log(
+        "Gemini raw response:",
+        rawText
+    )
+
+    if (!rawText) {
+        throw new Error(
+            "Gemini returned an empty response"
+        )
     }
 
-    return parsed
+    let parsed
+
+    try {
+        parsed = JSON.parse(rawText)
+    } catch (error) {
+        console.error(
+            "Gemini returned invalid JSON:",
+            rawText
+        )
+
+        throw new Error(
+            "Gemini returned invalid JSON"
+        )
+    }
+
+    if (
+        typeof parsed.insight !== "string" ||
+        typeof parsed.recommendation !== "string"
+    ) {
+        throw new Error(
+            "Gemini response is missing insight or recommendation"
+        )
+    }
+
+    let selectedIndex =
+        parsed.selectedPatternIndex
+
+    if (
+        !Number.isInteger(selectedIndex) ||
+        selectedIndex < 0 ||
+        selectedIndex >= patterns.length
+    ) {
+        selectedIndex = 0
+    }
+
+    return {
+        insight:
+            parsed.insight.trim(),
+
+        recommendation:
+            parsed.recommendation.trim(),
+
+        selectedPatternIndex:
+            selectedIndex,
+
+        selectedPattern:
+            patterns[selectedIndex],
+    }
 }
 
-function buildPrompt(stats) {
-    const { habits, tasks, windowStart, windowEnd } = stats
 
-    const habitLines = habits.list.length
-        ? habits.list.map(h =>
-            `- "${h.title}" (${h.category}): ${h.completed}/${h.scheduled} completed this week` +
-            (h.completionRate !== null ? ` (${h.completionRate}%)` : " (not scheduled this week)") +
-            `, current streak ${h.current_streak}, longest streak ${h.longest_streak}`
-        ).join("\n")
-        : "No habits tracked yet."
+function buildPrompt(patterns) {
+    const patternData = patterns.map(
+        (pattern, index) => {
+            return {
+                index,
 
-    const taskLines = tasks.total > 0
-        ? `${tasks.completed}/${tasks.total} tasks completed (${tasks.completionRate}%), ${tasks.overdue} overdue.` +
-        (tasks.byPriority.length
-            ? " Breakdown by priority: " + tasks.byPriority.map(p => `${p.priority}: ${p.completed}/${p.total}`).join(", ")
-            : "")
-        : "No tasks due this week."
+                type:
+                    pattern.type || null,
 
-    return `You write short, sharp weekly recaps for Habitrea AI, a habit-tracking app. Your output reads like a Whoop or Oura weekly insight — terse, specific, zero fluff. Every word must earn its place.
+                habit:
+                    pattern.habitTitle || null,
 
-DATA (${windowStart} to ${windowEnd}):
+                evidence:
+                    pattern.evidence || null,
 
-HABITS:
-${habitLines}
-Overall habit completion rate: ${habits.overallCompletionRate !== null ? habits.overallCompletionRate + "%" : "N/A"}
-${habits.bestDay ? `Strongest day: ${habits.bestDay.day} (${habits.bestDay.rate}% completion)` : ""}
-${habits.weakestDay ? `Weakest day: ${habits.weakestDay.day} (${habits.weakestDay.rate}% completion)` : ""}
+                recommendationCandidate:
+                    pattern.recommendation ||
+                    null,
 
-TASKS:
-${taskLines}
+                confidence:
+                    pattern.confidence ||
+                    null,
 
-STRICT RULES:
-- summary: ONE sentence, under 25 words. Lead with the single most important number. No throat-clearing ("It was a challenging week..."), no soft openers, no "let's celebrate" filler. State the fact, plainly.
-- suggestions: exactly 2, each ONE sentence under 20 words. Name a specific habit or task and a specific action. No "because" or "since" clauses explaining why — just the instruction.
-- Never restate a number that already appeared in summary inside a suggestion.
-- No emoji, no markdown, no exclamation points, no words like "journey," "momentum," "foundation."
+                score:
+                    pattern.score || 0,
+            }
+        }
+    )
 
-EXAMPLE of the correct length and tone (data is fictional, do not reuse it):
-{
-  "summary": "You completed 3 of 7 habits this week, with Reading at just 20%.",
-  "suggestions": [
-    "Move Reading to mornings, when your Meditation streak shows you follow through.",
-    "Clear the 1 overdue task today before adding anything new to your list."
-  ]
+    return `
+You are Habitrea AI Coach.
+
+Your job is to find ONE useful behavioral pattern from the user's habit data.
+
+You are NOT writing a weekly activity summary.
+
+The pattern data was calculated from real user activity.
+
+Use ONLY the information provided in the pattern candidates.
+
+Do not invent:
+- habit names
+- numbers
+- dates
+- times
+- completion rates
+- causes
+- psychological explanations
+
+Do not simply say that the user completed or missed a habit.
+
+Look for something actionable and meaningful.
+
+Prioritize patterns in this order:
+
+1. recurring_failure
+2. declining_trend
+3. time_of_day_pattern
+4. day_of_week_pattern
+5. positive_habit_relationship
+6. improving_trend
+7. streak_strength
+
+For a positive habit relationship, describe it as a relationship or correlation.
+
+For example:
+
+"Your coding habit is more consistent on days when you exercise."
+
+Do NOT claim:
+
+"Exercising causes you to code."
+
+INSIGHT RULES:
+
+- Maximum 2 sentences.
+- Explain what the user should notice.
+- Be specific.
+- Use the actual evidence.
+- Do not use generic praise.
+- Do not use emojis.
+- Do not use markdown.
+- Do not start with "This week" unless necessary.
+
+RECOMMENDATION RULES:
+
+- Give exactly ONE practical action.
+- The recommendation must be supported by the selected pattern.
+- Keep it realistic.
+- Do not give multiple actions.
+
+Return the zero-based index of the most useful pattern.
+
+PATTERN CANDIDATES:
+
+${JSON.stringify(patternData, null, 2)}
+
+Return JSON using the required response schema.
+`
 }
 
-Now write the real output for the data above, matching that exact length and directness. If there's too little data to say something specific, say that plainly in one sentence instead of inventing detail.`
-}
+
+
+

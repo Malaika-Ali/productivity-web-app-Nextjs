@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import SocialLoginButton from "@/components/common/auth/SocialLoginButton";
 import OrDivider from "@/components/common/auth/OrDivider";
 import AuthFormField from "@/components/common/auth/AuthFormField";
@@ -13,9 +12,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
-import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase/browserClient";
 import { toast } from "sonner"
+import AuthButton from "@/components/common/auth/AuthButton";
 
 // export const metadata = {
 //     title: "SignUp",
@@ -165,21 +164,7 @@ export default function Page() {
                             </Link>.
                         </p>
 
-                        {/* Submit */}
-                        <Button
-                            disabled={isLoading}
-                            type="submit"
-                            className="w-full h-12 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-[15px] font-bold tracking-wide transition-all mt-1 cursor-pointer border-r-8 border-b-8 border-purple-800"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="size-4 animate-spin" />
-                                    Creating Account...
-                                </>
-                            ) : (
-                                "Sign up free"
-                            )}
-                        </Button>
+                        <AuthButton isLoading={isLoading} normalText="Sign up free" loadingText="Creating Account..."/>
                     </form>
 
                     {/* Log in link */}

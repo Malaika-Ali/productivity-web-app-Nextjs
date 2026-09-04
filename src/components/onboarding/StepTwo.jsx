@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRouter } from 'next/navigation'
 import SuggestedHabitCard from "./SuggestedHabitCard";
+import { Loader2 } from "lucide-react";
 export default function StepTwo({ habits, userId, userName }) {
     const router = useRouter()
     const [selected, setSelected] = useState([]);
@@ -17,7 +18,7 @@ export default function StepTwo({ habits, userId, userName }) {
     };
 
     const allSelected = selected.length === habits.length;
-    console.log("habits as passed from step one :", JSON.stringify(habits, null, 2))
+    // console.log("habits as passed from step one :", JSON.stringify(habits, null, 2))
 
     const handleClick = async () => {
         if (selected.length === 0) return
@@ -163,12 +164,20 @@ export default function StepTwo({ habits, userId, userName }) {
                                 : "bg-white/8 text-white/25 cursor-not-allowed"
                         )}
                     >
-                        Start my journey 🚀
+                       {
+                        isLoading ?
+                        (
+                                      <>
+                                          <Loader2 className="size-4 animate-spin" />
+                                        Launching Your Space ...
+                                      </>
+                                  ) 
+                        :
+                        " Start my journey 🚀"
+                       }
                     </Button>
                 </div>
-
             </div>
-
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
       `}</style>

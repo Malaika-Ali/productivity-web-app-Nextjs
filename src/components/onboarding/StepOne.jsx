@@ -65,13 +65,13 @@ export default function StepOne({ userName, onHabitsGenerated }) {
 
     return (
         <div
-            className="min-h-screen w-full flex items-center justify-center px-4 py-12 font-sans"
+            className="min-h-screen w-full flex items-center justify-center px-4 py-12"
             style={{
                 background:
                     "radial-gradient(ellipse at 20% 50%, #1e1b4b 0%, #0f0e1a 40%, #13111f 100%)",
             }}
         >
-            {/* Ambient glow blobs */}
+
             <div
                 className="pointer-events-none fixed inset-0 overflow-hidden"
                 aria-hidden
