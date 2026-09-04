@@ -50,6 +50,7 @@ export default function CoachNote() {
                 <div className="flex flex-col gap-4">
                     <p className="text-sm leading-relaxed text-purple-100 z-100 mb-5">
                         {insight.insight}
+                        {insight.recommendation}
                         {/* You have kept the morning run for 12 days, that's great. I noticed reading slips after 9 PM, so try to move it to 10 AM. */}
                     </p>
 {/* suggestions */}

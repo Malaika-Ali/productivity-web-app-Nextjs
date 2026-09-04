@@ -9,7 +9,7 @@ const navItems = [
     { label: "Today", icon: CalendarDays, href: '/dashboard/today' },
     { label: "Habits", icon: Goal, href: '/dashboard/habits' },
     { label: "Tasks", icon: ListChecks, href: '/dashboard/tasks' },
-    { label: "Insights", icon: ChartColumn, href: '/dashboard/insights' },
+    // { label: "Insights", icon: ChartColumn, href: '/dashboard/insights' },
     { label: "Coach", icon: Sparkles, href: '/dashboard/coach' },
 ];
 
@@ -18,6 +18,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const [streak, setStreak] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
+    const [name, setName] = useState("")
 
     async function fetchCurrentStreak() {
         try {
@@ -33,8 +34,21 @@ export default function Sidebar() {
         }
     }
 
+    async function fetchName(){
+       try {
+         const res=await fetch("/api/user")
+         const data=await res.json()
+         if(!res.ok) throw new Error(data.error)
+            console.log(data)
+         setName(data?.fullname?.full_name)
+       } catch (error) {
+        console.log(error)
+       }
+    }
+
     useEffect(()=>{
         fetchCurrentStreak()
+        fetchName()
     }, [])
 
     return (
@@ -106,14 +120,15 @@ export default function Sidebar() {
                 <div className="flex items-center gap-2.5">
                     {/* Avatar */}
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 shrink-0">
-                        <span className="text-sm font-bold text-white">M</span>
+                        <span className="text-sm font-bold text-white">{name[0]}</span>
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[13px] font-semibold text-gray-800 leading-tight">
-                            Maya Chen
+                            {name}
                         </span>
                         <span className="text-[10px] text-gray-400 leading-tight">
-                            Pro · Year 1
+                            {/* Pro · Year 1 */}
+                            Free Plan
                         </span>
                     </div>
                 </div>

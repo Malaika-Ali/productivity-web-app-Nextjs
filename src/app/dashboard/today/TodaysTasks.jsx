@@ -7,8 +7,7 @@ import { useTasks } from '@/hooks/useTasks';
 const TodaysTasks = () => {
   const {tasks, toggleTask} = useTasks()
   return (
-    <div className="bg-white rounded-3xl py-6 px-4 w-full 
-        border-r-4 border-b-8 border-gray-200"
+    <div className="bg-white rounded-3xl py-6 px-4 w-full border-r-4 border-b-8 border-gray-200"
       style={{ borderRightWidth: '4px' }}>
       <div className="flex flex-col justify-between">
         <h3 className="text-base font-extrabold text-gray-900">Tasks</h3>
