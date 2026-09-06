@@ -1,9 +1,7 @@
-import { dateStr } from "@/lib/todaysDate";
-
 export const navbarConfig = {
     "/dashboard/today": {
         // title: "Good morning",
-        subtitle: `${dateStr}`,
+        // subtitle: `${dateStr}`,
         showSearch: false,
         // searchPlaceholder: "Search",
         // action: "add",

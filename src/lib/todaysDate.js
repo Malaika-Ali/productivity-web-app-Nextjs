@@ -1,6 +1,13 @@
-const today = new Date();
-export const dateStr = today.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-});
+// export const dateStr = new Date().toLocaleDateString("en-US", {
+//     weekday: "long",
+//     month: "long",
+//     day: "numeric",
+// });
+
+export function getTodayDateStr() {
+    return new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+    })
+}

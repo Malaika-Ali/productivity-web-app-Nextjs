@@ -6,13 +6,16 @@ import { usePathname } from "next/navigation";
 import { navbarConfig } from "./navbarConfig";
 import ButtonWithIcon from "../../common/buttons/ButtonWithIcon";
 import { supabase } from "@/lib/supabase/browserClient";
+import { getTodayDateStr } from "@/lib/todaysDate";
 
 export default function Navbar() {
     const [username, setUsername] = useState(null);
     const [mounted, setMounted] = useState(false);
+    const [todayDateStr, setTodayDateStr] = useState("");
 
     useEffect(() => {
         setMounted(true);
+        setTodayDateStr(getTodayDateStr());
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUsername(user?.user_metadata?.full_name ?? "there");
         });
@@ -26,6 +29,8 @@ export default function Navbar() {
         ? `Good morning, ${mounted ? username ?? "" : ""}`
         : config.title;
 
+    const subtitle = pathname === "/dashboard/today" ? todayDateStr : config.subtitle;
+
     const handleActionBtnClick = () => {
         if (config.actionEvent) {
             window.dispatchEvent(new CustomEvent(config.actionEvent))
@@ -36,9 +41,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between bg-dashboard-background px-6 py-6 w-full">
             {/* Left: Date + Greeting */}
             <div className="flex flex-col">
-                {config.subtitle &&
+                {subtitle &&
                     <span className="text-[14px] text-gray-500 font-medium mb-0.5">
-                        {config.subtitle}
+                        {subtitle}
                     </span>
                 }
 
