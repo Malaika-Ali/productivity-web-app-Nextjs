@@ -1,8 +1,9 @@
 import React from 'react'
 
-const ButtonWithIcon = ({Icon, text, disabled=false, bgColor,borderColor, hoverColor,onClick, ...props}) => {
+const ButtonWithIcon = ({Icon,id="", text, disabled=false, bgColor,borderColor, hoverColor,onClick, ...props}) => {
   return (
       <button 
+      id={id}
       disabled={disabled}
       onClick={onClick}
       className={`flex items-center gap-1.5 rounded-xl 

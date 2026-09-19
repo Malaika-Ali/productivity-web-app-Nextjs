@@ -57,6 +57,7 @@ export default function Navbar() {
                 {/* Search Button */}
                 {config.showSearch &&
                     <Button
+                    
                         variant="outline"
                         className="flex items-center gap-2 rounded-full bg-white border border-gray-200 text-gray-500 text-[13px] font-medium px-4 py-2 h-9 shadow-none hover:bg-gray-50"
                     >
@@ -81,6 +82,7 @@ export default function Navbar() {
                     config.action &&
                 <ButtonWithIcon text={config.action} Icon={Plus}
                         onClick={handleActionBtnClick}
+                       id={config.btnId}
                  />
 
                 }

@@ -145,7 +145,7 @@ export default function TaskModal({ task = null, onClose, mode = "edit", onTaskU
     return (
         <div
             onClick={handleBackdrop}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 cursor-default"
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 cursor-default"
         >
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[580px] max-h-[97%] p-7 flex flex-col gap-4 relative animate-in fade-in zoom-in-95 duration-200 overflow-y-auto">
 

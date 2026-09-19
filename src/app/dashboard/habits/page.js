@@ -5,33 +5,6 @@ import { HabitCard } from "@/components/common/cards/HabitCard"
 import HabitModal from "@/components/common/modals/HabitModal"
 import HeatMap from "@/components/heatMap/HeatMap"
 
-// Generate a 5-row x ~26-col heatmap grid (≈ last 3 months)
-function generateHeatmap() {
-  const grid = []
-  for (let row = 0; row < 7; row++) {
-    const cols = []
-    for (let col = 0; col < 26; col++) {
-      const r = Math.random()
-      let level = 0
-      if (r > 0.65) level = 3
-      else if (r > 0.45) level = 2
-      else if (r > 0.28) level = 1
-      cols.push(level)
-    }
-    grid.push(cols)
-  }
-  return grid
-}
-
-const heatmapData = generateHeatmap()
-
-const heatmapColors = [
-  "bg-[#e8e8f8]",
-  "bg-[#a5a8e8]",
-  "bg-[#6366c8]",
-  "bg-[#3730a3]",
-]
-
 const filters = ["All", "health", "learning", "minfulness", "productivity", "lifestyle"]
 
 export default function HabitsPage() {
@@ -76,7 +49,7 @@ export default function HabitsPage() {
   async function deleteHabit(id) {
     try {
       const res = await fetch(`/api/habits/${id}`, {
-        method: 'DELETE'  
+        method: 'DELETE'
       })
       const data = await res.json()
       if (!res.ok) {
@@ -130,23 +103,17 @@ export default function HabitsPage() {
             <p className="text-sm">No habits found. Add one to get started.</p>
           </div>
         )}
-
-        {/* Heatmap */}
-  
-
-<HeatMap/>
-
-
+        <HeatMap />
       </main>
 
       {showAddModal && (
         <HabitModal
           mode="add"
           onClose={() => setShowAddModal(false)}
-          onHabitUpdated={fetchHabits}  
+          onHabitUpdated={fetchHabits}
         />
-        )
-        }
+      )
+      }
     </div>
   )
 }

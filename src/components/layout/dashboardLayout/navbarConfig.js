@@ -20,5 +20,6 @@ export const navbarConfig = {
         searchPlaceholder: "Search habits...",
         action: "Add Task",
         actionEvent: "open-add-task",
+        btnId: "add-task-trigger"
     },
 };

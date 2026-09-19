@@ -4,6 +4,7 @@ import TaskModal from "@/components/common/modals/TaskModal";
 import TaskCard from "./TaskCard";
 import { useAllTasks } from "@/hooks/useAllTasks";
 import ButtonWithIcon from "@/components/common/buttons/ButtonWithIcon";
+import EmptyTasksState from "@/components/emptyStates/EmptyTaskState";
 
 function SectionHeader({ label, count }) {
     return (
@@ -36,10 +37,10 @@ export default function TasksPage() {
         <div className="w-full min-h-screen flex justify-center px-3 py-2">
             <div className="w-full p-4">
                 <section className="mb-6">
-                    <SectionHeader label="TODAY" 
-                    // count={today.length} 
-                    />
-                    <div className="flex flex-col gap-2.5">
+                    {/* <SectionHeader label="TODAY"/>  */}
+                     {/* count={today.length}  */}
+                    {/* > */}
+                    {/* <div className="flex flex-col gap-2.5">
                         {tasks.map((task) => (
                             <TaskCard
                                 key={task.id}
@@ -48,15 +49,30 @@ export default function TasksPage() {
                                 onDelete={()=>deleteTask(task.id)}
                             />
                         ))}
-                    </div>
+                    </div> */}
+                    {!loading && tasks.length === 0 ? (
+                        <EmptyTasksState onCreateTask={() => setShowAddModal(true)} />
+                    ) : (
+                        <div className="flex flex-col gap-2.5">
+                            {tasks.map((task) => (
+                                <TaskCard
+                                    key={task.id}
+                                    task={task}
+                                    onToggle={toggleTask}
+                                    onDelete={() => deleteTask(task.id)}
+                                />
+                            ))}
+                        </div>
+                    )}
                     {hasMore && (
                         <div className="flex justify-center items-center py-6">
                         <ButtonWithIcon
                             onClick={seeMore}
                             disabled={loadingMore}
-                            text={loadingMore ? "Loading..." : "See More"}
+                            text={loadingMore | loading ? "Loading..." : "See More"}
 
                         />
+                      
                         </div>
                     )}
                 </section>
