@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function EmptyTasksState({
+export default function EmptyStateUI({
     onCreateTask,
     // targetSelector = "#add-task-trigger",
     targetSelector,

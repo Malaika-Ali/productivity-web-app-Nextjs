@@ -4,7 +4,7 @@ import TaskModal from "@/components/common/modals/TaskModal";
 import TaskCard from "./TaskCard";
 import { useAllTasks } from "@/hooks/useAllTasks";
 import ButtonWithIcon from "@/components/common/buttons/ButtonWithIcon";
-import EmptyTasksState from "@/components/emptyStates/EmptyTaskState";
+import EmptyTasksState from "@/components/emptyStates/EmptyStateUI";
 
 function SectionHeader({ label, count }) {
     return (
@@ -21,10 +21,39 @@ function SectionHeader({ label, count }) {
     );
 }
 
+function TaskSection({ label, category, onCreateTask }) {
+    const { tasks, toggleTask, deleteTask, hasMore, loading, loadingMore, seeMore, total } = useAllTasks(category)
+
+    if (loading) return null // avoid a flash of 3 stacked "empty" sections before each resolves
+    if (tasks.length === 0) return null // hide sections with nothing in them (e.g. no overdue tasks — good news, don't show it)
+
+    return (
+        <section className="mb-6">
+            <SectionHeader label={label} count={total} />
+            <div className="flex flex-col gap-2.5">
+                {tasks.map((task) => (
+                    <TaskCard
+                        key={task.id}
+                        task={task}
+                        onToggle={toggleTask}
+                        onDelete={() => deleteTask(task.id)}
+                    />
+                ))}
+            </div>
+            {hasMore && (
+                <div className="flex justify-center items-center py-4">
+                    <ButtonWithIcon
+                        onClick={seeMore}
+                        disabled={loadingMore}
+                        text={loadingMore ? "Loading..." : "See More"}
+                    />
+                </div>
+            )}
+        </section>
+    )
+}
 
 export default function TasksPage() {
-    const { tasks, toggleTask, deleteTask, hasMore, loading, loadingMore, seeMore } = useAllTasks()
-    
     const [showAddModal, setShowAddModal] = useState(false)
 
     useEffect(() => {
@@ -36,53 +65,15 @@ export default function TasksPage() {
     return (
         <div className="w-full min-h-screen flex justify-center px-3 py-2">
             <div className="w-full p-4">
-                <section className="mb-6">
-                    {/* <SectionHeader label="TODAY"/>  */}
-                     {/* count={today.length}  */}
-                    {/* > */}
-                    {/* <div className="flex flex-col gap-2.5">
-                        {tasks.map((task) => (
-                            <TaskCard
-                                key={task.id}
-                                task={task}
-                                onToggle={toggleTask}
-                                onDelete={()=>deleteTask(task.id)}
-                            />
-                        ))}
-                    </div> */}
-                    {!loading && tasks.length === 0 ? (
-                        <EmptyTasksState onCreateTask={() => setShowAddModal(true)} element="task" targetSelector="#add-task-trigger" />
-                    ) : (
-                        <div className="flex flex-col gap-2.5">
-                            {tasks.map((task) => (
-                                <TaskCard
-                                    key={task.id}
-                                    task={task}
-                                    onToggle={toggleTask}
-                                    onDelete={() => deleteTask(task.id)}
-                                />
-                            ))}
-                        </div>
-                    )}
-                    {hasMore && (
-                        <div className="flex justify-center items-center py-6">
-                        <ButtonWithIcon
-                            onClick={seeMore}
-                            disabled={loadingMore}
-                            text={loadingMore ? "Loading..." : "See More"}
+                <TaskSection label="OVERDUE" category="overdue" />
+                <TaskSection label="UPCOMING" category="pending" />
+                <TaskSection label="COMPLETED" category="completed" />
 
-                        />
-                      
-                        </div>
-                    )}
-                </section>
-
-                {
-                    showAddModal &&
+                {showAddModal && (
                     <TaskModal
                         mode="add"
                         onClose={() => setShowAddModal(false)} />
-                }
+                )}
             </div>
         </div>
     );

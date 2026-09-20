@@ -13,6 +13,7 @@ export const navbarConfig = {
         searchPlaceholder: "Search habits...",
         action: "Add Habit",
         actionEvent: "open-add-habit",
+        btnId: "add-habit-trigger"
     },
     "/dashboard/tasks": {
         title: "My Tasks",
