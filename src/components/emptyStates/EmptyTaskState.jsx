@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 
 export default function EmptyTasksState({
     onCreateTask,
-    targetSelector = "#add-task-trigger",
+    // targetSelector = "#add-task-trigger",
+    targetSelector,
+    element
 }) {
     const containerRef = useRef(null);
     const pathRef = useRef(null);
@@ -232,7 +234,6 @@ export default function EmptyTasksState({
                     w-full
                     min-h-[420px]
                     rounded-xl
-                    bg-gray-50
                     flex
                     items-center
                     justify-center
@@ -249,7 +250,7 @@ export default function EmptyTasksState({
                         transition-colors
                     "
                 >
-                    Create your first task now
+                    Create your first {element} now
                 </button>
             </div>
 

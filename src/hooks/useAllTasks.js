@@ -2,10 +2,6 @@ import { useState, useEffect, useCallback } from "react"
 
 const PAGE_SIZE = 10
 
-// Separate from useTasks (which is purpose-built for the small "today/tomorrow"
-// dashboard widget, hitting /api/tasks/today with no pagination). This hook is
-// for the full Tasks page: paginated fetching via /api/tasks/all, PLUS optimistic
-// toggle/delete — both operating on the same growing `tasks` list.
 export function useAllTasks() {
     const [tasks, setTasks] = useState([])
     const [offset, setOffset] = useState(0)
@@ -37,10 +33,6 @@ export function useAllTasks() {
         fetchPage(offset, false)
     }
 
-    // Toggle doesn't know or care whether `tasks` came from page 1 or was built
-    // up across five "See More" clicks — it just finds the matching id in
-    // whatever's currently in state and flips it. Pagination and toggling are
-    // independent concerns operating on the same list.
     async function toggleTask(taskId, isCurrentlyCompleted) {
         const newStatus = isCurrentlyCompleted ? "todo" : "completed"
 
@@ -70,7 +62,8 @@ export function useAllTasks() {
             const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
             if (!res.ok) throw new Error('Failed')
         } catch (error) {
-            setTasks(previous) // revert to the exact pre-delete list, including whatever pages were loaded
+            // revert to the exact pre-delete list, including whatever pages were loaded
+            setTasks(previous) 
         }
     }
 

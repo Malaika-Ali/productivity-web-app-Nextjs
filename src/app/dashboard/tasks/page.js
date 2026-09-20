@@ -51,7 +51,7 @@ export default function TasksPage() {
                         ))}
                     </div> */}
                     {!loading && tasks.length === 0 ? (
-                        <EmptyTasksState onCreateTask={() => setShowAddModal(true)} />
+                        <EmptyTasksState onCreateTask={() => setShowAddModal(true)} element="task" targetSelector="#add-task-trigger" />
                     ) : (
                         <div className="flex flex-col gap-2.5">
                             {tasks.map((task) => (
@@ -69,7 +69,7 @@ export default function TasksPage() {
                         <ButtonWithIcon
                             onClick={seeMore}
                             disabled={loadingMore}
-                            text={loadingMore | loading ? "Loading..." : "See More"}
+                            text={loadingMore ? "Loading..." : "See More"}
 
                         />
                       
