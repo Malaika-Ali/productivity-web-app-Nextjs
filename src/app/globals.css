@@ -167,17 +167,7 @@
   'sidebar main';
 }
 
-
-
-
-
-
-
-
-
-
-
-
+/* stylings for loading animation */
 @keyframes float {
 
   0%,
@@ -238,4 +228,14 @@
 
 .animate-spin-slow {
   animation: spin-slow 3s linear infinite;
+}
+
+.auth-left-panel {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .auth-left-panel {
+    display: flex;
+  }
 }

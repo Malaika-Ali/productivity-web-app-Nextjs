@@ -1,4 +1,4 @@
-import AuthLeftPanel from "@/components/layout/authLayout/AuthLeftpanel";
+import AuthLeftPanel from "@/components/layout/authLayout/AuthLeftPanel";
 import { Toaster } from "sonner";
 
 // export const metadata = {
