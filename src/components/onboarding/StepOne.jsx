@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Bot, ArrowRight, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +20,7 @@ export default function StepOne({ userName, onHabitsGenerated }) {
     const [customText, setCustomText] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('')
+    const router=useRouter()
 
     const canSubmit = selectedGoals.length > 0 || customText.trim().length > 0
 
@@ -62,6 +64,10 @@ export default function StepOne({ userName, onHabitsGenerated }) {
             setLoading(false)
         }
     };
+
+    const handleSkipButton=()=>{
+        router.push('/dashboard/today')
+    }
 
     return (
         <div
@@ -247,7 +253,7 @@ export default function StepOne({ userName, onHabitsGenerated }) {
                 </div>
 
                 {/* Skip link */}
-                <p className="text-center mt-5 text-xs text-white/30 hover:text-white/50 transition-colors cursor-pointer">
+                <p onClick={handleSkipButton} className="text-center mt-5 text-xs text-white/30 hover:text-white/50 transition-colors cursor-pointer">
                     Skip for now
                 </p>
             </div>

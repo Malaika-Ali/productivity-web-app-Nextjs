@@ -6,7 +6,7 @@ export default function TodaysPlans() {
     const { habits, toggleHabit } = useHabits()
     
     return (
-        <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-b-8 border-r-4! border-gray-200"
+        <div className="bg-white rounded-3xl p-6 w-full max-w-170 border-b-8 border-r-4! border-gray-200" 
             style={{ borderRightWidth: '4px' }}>
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
@@ -17,7 +17,7 @@ export default function TodaysPlans() {
             </div>
 
             {/* Hbaits list */}
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2.5  max-h-[25rem] overflow-y-auto px-2">
                 {habits.length == 0 ? 
                     <p className='text-[13px] text-center text-gray-500'>No habits scheduled for today</p>
                 : habits.map((habit) => (

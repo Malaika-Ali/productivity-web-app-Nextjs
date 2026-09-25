@@ -79,7 +79,7 @@ export default function HabitsPage() {
           <Loading />
         ) :
           habitList.length === 0 ?
-            <EmptyTasksState element="habits" targetSelector="#add-habit-trigger"/>
+            <EmptyTasksState element="habit" targetSelector="#add-habit-trigger"/>
             :
             <>
               {/* Filter pills */}
