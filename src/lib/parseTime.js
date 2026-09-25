@@ -14,7 +14,6 @@ export function parseTime(timeStr) {
             period
         }
     }
-
     // Handle display format: "10:00 AM"
     const displayMatch = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
     if (displayMatch) {
@@ -24,7 +23,6 @@ export function parseTime(timeStr) {
             period: displayMatch[3].toUpperCase()
         }
     }
-
     return { hour: "07", minute: "30", period: "AM" }
 }
 
