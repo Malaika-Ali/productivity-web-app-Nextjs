@@ -2,7 +2,7 @@ import AppLogo from "./AppLogo";
 import FeatureList from "./FeatureList";
 // import TestimonialCard from "./TestimonialCard";
 
-export default function AuthLeftPanel() {
+export default function AuthPanel() {
     return (
         <aside
             className="hidden lg:flex w-[520px]  flex-col shrink-0 min-h-screen relative overflow-hidden bg-purple-700"

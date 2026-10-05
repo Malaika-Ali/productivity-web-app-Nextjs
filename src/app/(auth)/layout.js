@@ -1,4 +1,4 @@
-import AuthLeftPanel from "@/components/layout/authLayout/AuthLeftPanel";
+import AuthPanel from "@/components/layout/authLayout/AuthPanel";
 import { Toaster } from "sonner";
 
 // export const metadata = {
@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 export default function AuthLayout({ children }) {
     return (
         <div className="min-h-screen flex">
-            <AuthLeftPanel />
+            <AuthPanel />
             <main className="flex-1 flex flex-col min-h-screen bg-white">
                 {children}
                 <Toaster />
