@@ -7,139 +7,119 @@ const RESPONSE_SCHEMA = {
         insight: {
             type: "STRING",
             description:
-                "A concise behavioral insight in 1-2 sentences based only on the provided data.",
+                "A specific human-like behavioral insight in 1-3 sentences.",
+        },
+        whyItMatters: {
+            type: "STRING",
+            description:
+                "Why this pattern matters for the user's behavior.",
+        },
+        hypothesis: {
+            type: "STRING",
+            description:
+                "A cautious possible explanation. Clearly avoid claiming causation.",
         },
         recommendation: {
             type: "STRING",
             description:
-                "One concrete and practical action based on the selected pattern.",
+                "One concrete action the user can take.",
+        },
+        experiment: {
+            type: "STRING",
+            description:
+                "One small behavioral experiment for the next week.",
         },
         selectedPatternIndex: {
             type: "INTEGER",
             description:
-                "The zero-based index of the selected pattern.",
+                "Zero-based index of the strongest candidate.",
         },
     },
     required: [
         "insight",
+        "whyItMatters",
+        "hypothesis",
         "recommendation",
+        "experiment",
         "selectedPatternIndex",
     ],
 }
 
 export async function generateInsight(patterns) {
-    if (!patterns || patterns.length === 0) {
+    if (!patterns?.length) {
         return {
             insight:
-                "There is not enough activity data yet to identify a reliable behavioral pattern.",
+                "Habitrea needs a little more activity before it can identify a reliable behavioral pattern.",
+            whyItMatters:
+                "A useful coach should be based on repeated behavior rather than a few isolated days.",
+            hypothesis:
+                "There is not enough evidence yet to form a meaningful behavioral hypothesis.",
             recommendation:
-                "Keep logging your habits consistently so Habitrea can identify useful patterns.",
+                "Keep logging your habits for another week.",
+            experiment:
+                "Continue your normal routine and let Habitrea collect more behavioral evidence.",
             selectedPatternIndex: null,
             selectedPattern: null,
         }
     }
 
-    const prompt = buildPrompt(patterns)
-
     const apiKey = process.env.GEMINI_API_KEY
 
     if (!apiKey) {
-        throw new Error(
-            "GEMINI_API_KEY is not configured"
-        )
+        throw new Error("GEMINI_API_KEY is not configured")
     }
+
+    const prompt = buildPrompt(patterns)
 
     const response = await fetch(
         `${GEMINI_URL}?key=${apiKey}`,
         {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json",
             },
-
             body: JSON.stringify({
                 contents: [
                     {
-                        parts: [
-                            {
-                                text: prompt,
-                            },
-                        ],
+                        parts: [{ text: prompt }],
                     },
                 ],
-
                 generationConfig: {
-                    responseMimeType:
-                        "application/json",
-
-                    responseSchema:
-                        RESPONSE_SCHEMA,
-
-                    temperature: 0.3,
-
-                    maxOutputTokens: 1000,
+                    responseMimeType: "application/json",
+                    responseSchema: RESPONSE_SCHEMA,
+                    temperature: 0.45,
+                    maxOutputTokens: 1200,
                 },
             }),
         }
     )
 
     if (!response.ok) {
-        const errorText =
-            await response.text()
-
+        const errorText = await response.text()
         throw new Error(
             `Gemini API error (${response.status}): ${errorText}`
         )
     }
 
     const data = await response.json()
-
     const rawText =
         data?.candidates?.[0]?.content?.parts?.[0]?.text
 
-    console.log(
-        "Gemini finish reason:",
-        data?.candidates?.[0]?.finishReason
-    )
-
-    console.log(
-        "Gemini raw response:",
-        rawText
-    )
-
     if (!rawText) {
-        throw new Error(
-            "Gemini returned an empty response"
-        )
+        throw new Error("Gemini returned an empty response")
     }
 
     let parsed
 
     try {
         parsed = JSON.parse(rawText)
-    } catch (error) {
-        console.error(
-            "Gemini returned invalid JSON:",
-            rawText
-        )
-
-        throw new Error(
-            "Gemini returned invalid JSON"
-        )
+    } catch {
+        throw new Error("Gemini returned invalid JSON")
     }
 
-    if (
-        typeof parsed.insight !== "string" ||
-        typeof parsed.recommendation !== "string"
-    ) {
-        throw new Error(
-            "Gemini response is missing insight or recommendation"
-        )
-    }
+    validateResponse(parsed)
 
-    let selectedIndex =
-        parsed.selectedPatternIndex
+    let selectedIndex = parsed.selectedPatternIndex
 
     if (
         !Number.isInteger(selectedIndex) ||
@@ -150,122 +130,99 @@ export async function generateInsight(patterns) {
     }
 
     return {
-        insight:
-            parsed.insight.trim(),
-
-        recommendation:
-            parsed.recommendation.trim(),
-
-        selectedPatternIndex:
-            selectedIndex,
-
-        selectedPattern:
-            patterns[selectedIndex],
+        insight: parsed.insight.trim(),
+        whyItMatters: parsed.whyItMatters.trim(),
+        hypothesis: parsed.hypothesis.trim(),
+        recommendation: parsed.recommendation.trim(),
+        experiment: parsed.experiment.trim(),
+        selectedPatternIndex: selectedIndex,
+        selectedPattern: patterns[selectedIndex],
     }
 }
 
+function validateResponse(parsed) {
+    const requiredStrings = [
+        "insight",
+        "whyItMatters",
+        "hypothesis",
+        "recommendation",
+        "experiment",
+    ]
+
+    for (const field of requiredStrings) {
+        if (
+            typeof parsed?.[field] !== "string" ||
+            !parsed[field].trim()
+        ) {
+            throw new Error(
+                `Gemini response is missing ${field}`
+            )
+        }
+    }
+}
 
 function buildPrompt(patterns) {
-    const patternData = patterns.map(
-        (pattern, index) => {
-            return {
-                index,
-
-                type:
-                    pattern.type || null,
-
-                habit:
-                    pattern.habitTitle || null,
-
-                evidence:
-                    pattern.evidence || null,
-
-                recommendationCandidate:
-                    pattern.recommendation ||
-                    null,
-
-                confidence:
-                    pattern.confidence ||
-                    null,
-
-                score:
-                    pattern.score || 0,
-            }
-        }
-    )
+    const candidates = patterns.map((pattern, index) => ({
+        index,
+        type: pattern.type,
+        habit: pattern.habitTitle || null,
+        relatedHabit: pattern.relatedHabitTitle || null,
+        evidence: pattern.evidence,
+        confidence: pattern.confidence,
+        finalScore: pattern.finalScore || pattern.score || 0,
+    }))
 
     return `
-You are Habitrea AI Coach.
+You are Habitrea's long-term AI behavioral coach.
 
-Your job is to find ONE useful behavioral pattern from the user's habit data.
+Your job is NOT to turn statistics into sentences.
 
-You are NOT writing a weekly activity summary.
+Your job is to interpret evidence-backed behavioral findings and help the
+user understand what may be making their habits easier or harder.
 
-The pattern data was calculated from real user activity.
+The candidates below were calculated by Habitrea's analytics engine.
+They are the source of truth.
 
-Use ONLY the information provided in the pattern candidates.
+STRICT RULES:
 
-Do not invent:
-- habit names
-- numbers
-- dates
-- times
-- completion rates
-- causes
-- psychological explanations
+1. Never invent numbers, habits, dates, causes, events, or user feelings.
+2. Never claim that one habit CAUSED another. The data only shows behavioral
+   association unless explicit experimental evidence is provided.
+3. Do not simply repeat a completion percentage as the entire insight.
+4. Prefer relationships, conditions, changes, triggers, overload, recovery,
+   and recurring behavior over trivial calendar facts.
+5. Explain what the pattern could mean for the user's routine.
+6. Clearly label explanations as possibilities using phrases such as
+   "may", "appears", "could", or "suggests".
+7. Give ONE practical recommendation.
+8. Give ONE small experiment that can be tested during the next week.
+9. Do not give generic advice such as "try harder", "stay motivated", or
+   "be consistent".
+10. Do not mention that you are an AI.
+11. No emojis and no markdown.
+12. Write like a thoughtful coach who has observed the user's behavior over
+    several weeks.
 
-Do not simply say that the user completed or missed a habit.
+A strong example:
 
-Look for something actionable and meaningful.
+"Your coding habit appears to be much stronger on days when you work out.
+You completed coding on 81% of workout days versus 29% of days when the
+workout was missed."
 
-Prioritize patterns in this order:
+Then the hypothesis should explain this cautiously:
 
-1. recurring_failure
-2. declining_trend
-3. time_of_day_pattern
-4. day_of_week_pattern
-5. positive_habit_relationship
-6. improving_trend
-7. streak_strength
+"Your workout may be acting as a useful transition into a focused routine."
 
-For a positive habit relationship, describe it as a relationship or correlation.
+Then give one practical action and one measurable experiment.
 
-For example:
-
-"Your coding habit is more consistent on days when you exercise."
-
-Do NOT claim:
-
-"Exercising causes you to code."
-
-INSIGHT RULES:
-
-- Maximum 2 sentences.
-- Explain what the user should notice.
-- Be specific.
-- Use the actual evidence.
-- Do not use generic praise.
-- Do not use emojis.
-- Do not use markdown.
-- Do not start with "This week" unless necessary.
-
-RECOMMENDATION RULES:
-
-- Give exactly ONE practical action.
-- The recommendation must be supported by the selected pattern.
-- Keep it realistic.
-- Do not give multiple actions.
-
-Return the zero-based index of the most useful pattern.
+Select the candidate that has the strongest combination of evidence,
+actionability, novelty, and usefulness. Do not select a pattern merely
+because it has a large number.
 
 PATTERN CANDIDATES:
 
-${JSON.stringify(patternData, null, 2)}
+${JSON.stringify(candidates, null, 2)}
 
-Return JSON using the required response schema.
+Return JSON using the provided response schema.
 `
 }
-
-
-
-

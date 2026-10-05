@@ -1,63 +1,44 @@
 const TYPE_PRIORITY = {
-    recurring_failure: 10,
+    positive_habit_relationship: 10,
+    negative_habit_relationship: 10,
+    task_load_relationship: 10,
     declining_trend: 9,
-    time_of_day_pattern: 8,
+    recovery: 8,
     day_of_week_pattern: 8,
-    positive_habit_relationship: 7,
-    improving_trend: 6,
-    streak_strength: 3,
+    scheduled_time_performance: 7,
+    improving_trend: 7,
+    streak_strength: 4,
 }
 
-const CONFIDENCE_SCORE = {
-    high: 1,
-    medium: 0.6,
-    low: 0.2,
-}
-
-export function selectInsights(
-    patterns,
-    previousInsight = null
-) {
-    if (!patterns || patterns.length === 0) {
+export function selectInsights(patterns, previousInsight = null) {
+    if (!Array.isArray(patterns) || patterns.length === 0) {
         return []
     }
 
-    const previousPatternType =
-        previousInsight?.pattern_type || null
+    const previousType = previousInsight?.pattern_type || null
+    const previousHabitId = previousInsight?.habit_id || null
 
-    const previousHabitId =
-        previousInsight?.habit_id || null
-
-    const ranked = patterns
+    return patterns
         .map((pattern) => {
-            let score = pattern.score || 0
+            let score = Number(pattern.score || 0)
 
-            score +=
-                (TYPE_PRIORITY[pattern.type] || 0) * 0.2
+            score += (TYPE_PRIORITY[pattern.type] || 0) * 0.25
+            score += Number(pattern.confidence || 0) * 1.5
+            score += Number(pattern.actionability || 0) * 1.5
+            score += Number(pattern.novelty || 0)
 
-            score +=
-                (CONFIDENCE_SCORE[pattern.confidence] || 0) *
-                0.5
-
-            // Avoid repeatedly showing the exact same
-            // type of insight for the same habit.
             if (
-                previousPatternType === pattern.type &&
-                previousHabitId === pattern.habitId
+                pattern.type === previousType &&
+                pattern.habitId === previousHabitId
             ) {
-                score -= 2
+                score -= 2.5
             }
 
             return {
                 ...pattern,
-                finalScore: score,
+                finalScore: Number(score.toFixed(2)),
             }
         })
-        .sort(
-            (a, b) =>
-                b.finalScore - a.finalScore
-        )
-
-    // Give Gemini only the strongest candidates.
-    return ranked.slice(0, 5)
+        .sort((a, b) => b.finalScore - a.finalScore)
+        .slice(0, 5)
 }

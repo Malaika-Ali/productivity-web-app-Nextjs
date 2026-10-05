@@ -1,1010 +1,445 @@
-const DAY_NAMES = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-];
+const MIN_OBSERVATIONS = 5
+const MIN_RELATIONSHIP_OBSERVATIONS = 8
 
-const TIME_LABELS = {
-    morning: "morning",
-    afternoon: "afternoon",
-    evening: "evening",
-    night: "night",
-};
+export function detectPatterns(profile) {
+    const patterns = []
 
-export async function detectPatterns(supabase, userId) {
-    if (!supabase) {
-        throw new Error("Supabase client is required");
+    for (const habit of profile.habits) {
+        const trend = detectTrend(habit)
+        if (trend) patterns.push(trend)
+
+        const dayPattern = detectDayPattern(habit)
+        if (dayPattern) patterns.push(dayPattern)
+
+        const scheduledTimePattern = detectScheduledTimePerformance(habit)
+        if (scheduledTimePattern) patterns.push(scheduledTimePattern)
+
+        const recovery = detectRecovery(habit)
+        if (recovery) patterns.push(recovery)
+
+        const streak = detectMeaningfulStreak(habit)
+        if (streak) patterns.push(streak)
     }
 
-    if (!userId) {
-        throw new Error("User ID is required");
-    }
+    const relationships = detectHabitRelationships(profile)
+    patterns.push(...relationships)
 
-    const today = new Date();
+    const overload = detectTaskLoadRelationships(profile)
+    patterns.push(...overload)
 
-    const sixtyDaysAgo = new Date(today);
-    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-
-    const sixtyDaysAgoString = formatDate(sixtyDaysAgo);
-    const todayString = formatDate(today);
-
-    const { data: habits, error: habitsError } = await supabase
-        .from("habits")
-        .select(`
-            id,
-            title,
-            category,
-            target_days,
-            preferred_time,
-            current_streak,
-            longest_streak
-        `)
-        .eq("user_id", userId);
-
-    if (habitsError) {
-        console.error("Error fetching habits:", habitsError);
-        throw habitsError;
-    }
-
-    if (!habits || habits.length === 0) {
-        return [];
-    }
-
-    const habitIds = habits.map((habit) => habit.id);
-
-    const { data: completions, error: completionsError } = await supabase
-        .from("habit_completions")
-        .select(`
-            habit_id,
-            completed_on
-        `)
-        .in("habit_id", habitIds)
-        .gte("completed_on", sixtyDaysAgoString)
-        .lte("completed_on", todayString);
-
-    if (completionsError) {
-        console.error(
-            "Error fetching habit completions:",
-            completionsError
-        );
-
-        throw completionsError;
-    }
-
-    const safeCompletions = completions || [];
-
-    const patterns = [];
-
-    for (const habit of habits) {
-        const habitCompletions = safeCompletions.filter(
-            (completion) => completion.habit_id === habit.id
-        );
-
-        const habitPatterns = analyzeHabit(
-            habit,
-            habitCompletions,
-            today
-        );
-
-        patterns.push(...habitPatterns);
-    }
-
-    const relationshipPatterns = detectHabitRelationships(
-        habits,
-        safeCompletions
-    );
-
-    patterns.push(...relationshipPatterns);
-
-    return removeDuplicatePatterns(patterns)
+    return dedupePatterns(patterns)
+        .filter((pattern) => pattern.confidence >= 0.65)
         .sort((a, b) => b.score - a.score)
-        .slice(0, 15);
+        .slice(0, 20)
 }
 
-function analyzeHabit(habit, completions, today) {
-    const patterns = [];
+function detectTrend(habit) {
+    if (habit.rows.length < 10) return null
+    if (habit.recentRate == null || habit.previousRate == null) return null
 
-    const streakPattern = detectStreakPattern(habit);
+    const difference = habit.recentRate - habit.previousRate
 
-    if (streakPattern) {
-        patterns.push(streakPattern);
-    }
+    if (Math.abs(difference) < 15) return null
 
-    const trendPattern = detectTrend(
-        habit,
-        completions,
-        today
-    );
-
-    if (trendPattern) {
-        patterns.push(trendPattern);
-    }
-
-    const dayPattern = detectDayOfWeekPattern(
-        habit,
-        completions,
-        today
-    );
-
-    if (dayPattern) {
-        patterns.push(dayPattern);
-    }
-
-    const recurringFailurePattern =
-        detectRecurringFailure(
-            habit,
-            completions,
-            today
-        );
-
-    if (recurringFailurePattern) {
-        patterns.push(recurringFailurePattern);
-    }
-
-    const timePattern = detectPreferredTimePattern(
-        habit,
-        completions,
-        today
-    );
-
-    if (timePattern) {
-        patterns.push(timePattern);
-    }
-
-    return patterns;
-}
-
-function detectStreakPattern(habit) {
-    const currentStreak = Number(
-        habit.current_streak || 0
-    );
-
-    const longestStreak = Number(
-        habit.longest_streak || 0
-    );
-
-    if (currentStreak < 4) {
-        return null;
-    }
-
-    let confidence = "medium";
-
-    if (currentStreak >= 7) {
-        confidence = "high";
-    }
+    const improving = difference > 0
 
     return {
-        type: "streak_strength",
-
+        type: improving ? "improving_trend" : "declining_trend",
         habitId: habit.id,
-
         habitTitle: habit.title,
-
         evidence: {
-            currentStreak,
-            longestStreak,
+            recentCompletionRate: habit.recentRate,
+            previousCompletionRate: habit.previousRate,
+            changePoints: Math.abs(difference),
+            observations: habit.rows.length,
         },
-
-        recommendation:
-            "Protect the routine that is already working by keeping the habit easy to complete on busy days.",
-
-        confidence,
-
-        score: Math.min(
-            10,
-            3 + currentStreak * 0.4
-        ),
-    };
+        confidence: confidenceFromObservations(habit.rows.length),
+        evidenceStrength: Math.min(1, Math.abs(difference) / 40),
+        actionability: improving ? 0.65 : 0.9,
+        novelty: 0.65,
+        goalRelevance: 0.75,
+        score: 5 + Math.min(4, Math.abs(difference) / 10),
+    }
 }
 
-function detectTrend(habit, completions, today) {
-    const currentPeriodStart = new Date(today);
+function detectDayPattern(habit) {
+    const groups = Array.from({ length: 7 }, (_, dayIndex) => {
+        const rows = habit.rows.filter((row) => row.dayIndex === dayIndex)
+        if (!rows.length) return null
 
-    currentPeriodStart.setDate(
-        currentPeriodStart.getDate() - 29
-    );
+        const completed = rows.filter((row) => row.completed).length
 
-    const previousPeriodStart = new Date(today);
+        return {
+            dayIndex,
+            dayName: rows[0].dayName,
+            observations: rows.length,
+            rate: Math.round((completed / rows.length) * 100),
+        }
+    }).filter(Boolean)
 
-    previousPeriodStart.setDate(
-        previousPeriodStart.getDate() - 59
-    );
+    if (groups.length < 2) return null
 
-    const previousPeriodEnd = new Date(today);
-
-    previousPeriodEnd.setDate(
-        previousPeriodEnd.getDate() - 30
-    );
-
-    const currentStats = getPeriodStats(
-        habit,
-        completions,
-        currentPeriodStart,
-        today
-    );
-
-    const previousStats = getPeriodStats(
-        habit,
-        completions,
-        previousPeriodStart,
-        previousPeriodEnd
-    );
+    const strongest = [...groups].sort((a, b) => b.rate - a.rate)[0]
+    const weakest = [...groups].sort((a, b) => a.rate - b.rate)[0]
 
     if (
-        currentStats.scheduled < 3 ||
-        previousStats.scheduled < 3
+        strongest.observations < 3 ||
+        weakest.observations < 3 ||
+        strongest.rate - weakest.rate < 30
     ) {
-        return null;
+        return null
     }
 
-    const difference =
-        currentStats.completionRate -
-        previousStats.completionRate;
-
-    if (Math.abs(difference) < 15) {
-        return null;
-    }
-
-    if (difference > 0) {
-        return {
-            type: "improving_trend",
-
-            habitId: habit.id,
-
-            habitTitle: habit.title,
-
-            evidence: {
-                previousCompletionRate:
-                    previousStats.completionRate,
-
-                currentCompletionRate:
-                    currentStats.completionRate,
-
-                improvementPoints:
-                    difference,
-            },
-
-            recommendation:
-                "Identify what changed recently and keep that part of your routine consistent.",
-
-            confidence:
-                currentStats.scheduled >= 8
-                    ? "high"
-                    : "medium",
-
-            score: Math.min(
-                9,
-                4 + difference / 10
-            ),
-        };
-    }
-
-    return {
-        type: "declining_trend",
-
-        habitId: habit.id,
-
-        habitTitle: habit.title,
-
-        evidence: {
-            previousCompletionRate:
-                previousStats.completionRate,
-
-            currentCompletionRate:
-                currentStats.completionRate,
-
-            declinePoints:
-                Math.abs(difference),
-        },
-
-        recommendation:
-            "Reduce the habit to a smaller version temporarily so it is easier to rebuild consistency.",
-
-        confidence:
-            currentStats.scheduled >= 8
-                ? "high"
-                : "medium",
-
-        score: Math.min(
-            10,
-            5 + Math.abs(difference) / 10
-        ),
-    };
-}
-
-function detectDayOfWeekPattern(
-    habit,
-    completions,
-    today
-) {
-    const startDate = new Date(today);
-
-    startDate.setDate(
-        startDate.getDate() - 55
-    );
-
-    const dayStats = [];
-
-    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-        const scheduledDates =
-            getScheduledDatesForDay(
-                habit,
-                startDate,
-                today,
-                dayIndex
-            );
-
-        if (scheduledDates.length < 3) {
-            continue;
-        }
-
-        const completedCount =
-            countCompletedDates(
-                completions,
-                scheduledDates
-            );
-
-        const completionRate = calculateRate(
-            completedCount,
-            scheduledDates.length
-        );
-
-        dayStats.push({
-            dayIndex,
-            dayName: DAY_NAMES[dayIndex],
-            scheduled: scheduledDates.length,
-            completed: completedCount,
-            completionRate,
-        });
-    }
-
-    if (dayStats.length < 2) {
-        return null;
-    }
-
-    dayStats.sort(
-        (a, b) =>
-            b.completionRate -
-            a.completionRate
-    );
-
-    const strongestDay = dayStats[0];
-
-    const weakestDay =
-        dayStats[dayStats.length - 1];
-
-    const difference =
-        strongestDay.completionRate -
-        weakestDay.completionRate;
-
-    if (difference < 30) {
-        return null;
-    }
+    const totalObservations =
+        strongest.observations + weakest.observations
 
     return {
         type: "day_of_week_pattern",
-
         habitId: habit.id,
-
         habitTitle: habit.title,
-
         evidence: {
-            strongestDay:
-                strongestDay.dayName,
-
-            strongestRate:
-                strongestDay.completionRate,
-
-            weakestDay:
-                weakestDay.dayName,
-
-            weakestRate:
-                weakestDay.completionRate,
-
-            differencePoints:
-                difference,
+            strongestDay: strongest.dayName,
+            strongestRate: strongest.rate,
+            weakestDay: weakest.dayName,
+            weakestRate: weakest.rate,
+            differencePoints: strongest.rate - weakest.rate,
+            observations: totalObservations,
         },
-
-        recommendation:
-            `Plan a smaller or easier version of ${habit.title} for ${weakestDay.dayName}.`,
-
-        confidence:
-            weakestDay.scheduled >= 5
-                ? "high"
-                : "medium",
-
-        score: Math.min(
-            10,
-            5 + difference / 20
+        confidence: confidenceFromObservations(totalObservations),
+        evidenceStrength: Math.min(
+            1,
+            (strongest.rate - weakest.rate) / 60
         ),
-    };
+        actionability: 0.85,
+        novelty: 0.8,
+        goalRelevance: 0.7,
+        score: 6 + Math.min(3, (strongest.rate - weakest.rate) / 20),
+    }
 }
 
-function detectRecurringFailure(
-    habit,
-    completions,
-    today
-) {
-    const startDate = new Date(today);
+function detectScheduledTimePerformance(habit) {
+    if (!habit.preferredTime || habit.rows.length < 8) return null
 
-    startDate.setDate(
-        startDate.getDate() - 55
-    );
+    // We do NOT have actual completion timestamps in Habitrea's current
+    // habit_completions table, so this detector only evaluates whether the
+    // user's chosen schedule is succeeding. It deliberately does not claim
+    // that a particular clock time causes success.
+    const rate = habit.completionRate
 
-    let worstDay = null;
-
-    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-        if (!isHabitScheduledForDay(habit, dayIndex)) {
-            continue;
-        }
-
-        const scheduledDates =
-            getScheduledDatesForDay(
-                habit,
-                startDate,
-                today,
-                dayIndex
-            );
-
-        if (scheduledDates.length < 4) {
-            continue;
-        }
-
-        const completed =
-            countCompletedDates(
-                completions,
-                scheduledDates
-            );
-
-        const missed =
-            scheduledDates.length -
-            completed;
-
-        const completionRate =
-            calculateRate(
-                completed,
-                scheduledDates.length
-            );
-
-        if (
-            completionRate <= 50 &&
-            missed >= 3
-        ) {
-            if (
-                !worstDay ||
-                completionRate <
-                worstDay.completionRate
-            ) {
-                worstDay = {
-                    dayIndex,
-                    dayName:
-                        DAY_NAMES[dayIndex],
-
-                    scheduled:
-                        scheduledDates.length,
-
-                    completed,
-
-                    missed,
-
-                    completionRate,
-                };
-            }
-        }
-    }
-
-    if (!worstDay) {
-        return null;
-    }
+    if (rate == null || (rate > 40 && rate < 75)) return null
 
     return {
-        type: "recurring_failure",
-
+        type: "scheduled_time_performance",
         habitId: habit.id,
-
         habitTitle: habit.title,
-
         evidence: {
-            failureDay:
-                worstDay.dayName,
-
-            completed:
-                worstDay.completed,
-
-            scheduled:
-                worstDay.scheduled,
-
-            missed:
-                worstDay.missed,
-
-            completionRate:
-                worstDay.completionRate,
+            preferredTime: habit.preferredTime,
+            completionRate: rate,
+            observations: habit.rows.length,
         },
+        confidence: confidenceFromObservations(habit.rows.length),
+        evidenceStrength: Math.min(1, Math.abs(rate - 50) / 50),
+        actionability: rate <= 40 ? 0.82 : 0.55,
+        novelty: 0.55,
+        goalRelevance: 0.7,
+        score: rate <= 40 ? 7 : 5,
+    }
+}
 
-        recommendation:
-            `Make ${habit.title} easier or schedule it differently on ${worstDay.dayName}.`,
+function detectRecovery(habit) {
+    const rows = habit.rows
+    if (rows.length < 14) return null
 
-        confidence:
-            worstDay.scheduled >= 6
-                ? "high"
-                : "medium",
+    const recent = rows.slice(-7)
+    const previous = rows.slice(-14, -7)
 
-        score: Math.min(
-            10,
-            7 +
-            (100 -
-                worstDay.completionRate) /
-            30
+    if (recent.length < 5 || previous.length < 5) return null
+
+    const recentRate = percentCompleted(recent)
+    const previousRate = percentCompleted(previous)
+
+    if (previousRate > 50 || recentRate < 65) return null
+
+    return {
+        type: "recovery",
+        habitId: habit.id,
+        habitTitle: habit.title,
+        evidence: {
+            previousWeekRate: previousRate,
+            recentWeekRate: recentRate,
+            improvementPoints: recentRate - previousRate,
+            observations: recent.length + previous.length,
+        },
+        confidence: confidenceFromObservations(
+            recent.length + previous.length
         ),
-    };
+        evidenceStrength: Math.min(
+            1,
+            (recentRate - previousRate) / 50
+        ),
+        actionability: 0.75,
+        novelty: 0.85,
+        goalRelevance: 0.75,
+        score: 7 + Math.min(2, (recentRate - previousRate) / 20),
+    }
 }
 
-function detectPreferredTimePattern(
-    habit,
-    completions,
-    today
-) {
-    if (!habit.preferred_time) {
-        return null;
+function detectMeaningfulStreak(habit) {
+    if (habit.currentStreak < 5) return null
+
+    return {
+        type: "streak_strength",
+        habitId: habit.id,
+        habitTitle: habit.title,
+        evidence: {
+            currentStreak: habit.currentStreak,
+            longestStreak: habit.longestStreak,
+        },
+        confidence: habit.currentStreak >= 7 ? 0.85 : 0.7,
+        evidenceStrength: Math.min(1, habit.currentStreak / 10),
+        actionability: 0.5,
+        novelty: 0.35,
+        goalRelevance: 0.65,
+        score: Math.min(7, 4 + habit.currentStreak / 3),
     }
-
-    const preferredTime = String(
-        habit.preferred_time
-    ).toLowerCase();
-
-    if (!TIME_LABELS[preferredTime]) {
-        return null;
-    }
-
-    const startDate = new Date(today);
-
-    startDate.setDate(
-        startDate.getDate() - 29
-    );
-
-    const stats = getPeriodStats(
-        habit,
-        completions,
-        startDate,
-        today
-    );
-
-    if (stats.scheduled < 5) {
-        return null;
-    }
-
-    if (stats.completionRate >= 75) {
-        return {
-            type: "time_of_day_pattern",
-
-            habitId: habit.id,
-
-            habitTitle: habit.title,
-
-            evidence: {
-                preferredTime,
-                completionRate:
-                    stats.completionRate,
-                scheduled:
-                    stats.scheduled,
-                completed:
-                    stats.completed,
-            },
-
-            recommendation:
-                `Keep ${habit.title} anchored to your ${preferredTime} routine because that schedule is currently working well.`,
-
-            confidence:
-                stats.scheduled >= 8
-                    ? "high"
-                    : "medium",
-
-            score:
-                5 +
-                stats.completionRate / 25,
-        };
-    }
-
-    if (stats.completionRate <= 40) {
-        return {
-            type: "time_of_day_pattern",
-
-            habitId: habit.id,
-
-            habitTitle: habit.title,
-
-            evidence: {
-                preferredTime,
-                completionRate:
-                    stats.completionRate,
-                scheduled:
-                    stats.scheduled,
-                completed:
-                    stats.completed,
-            },
-
-            recommendation:
-                `Experiment with moving ${habit.title} away from ${preferredTime}, since that slot has been difficult to maintain.`,
-
-            confidence:
-                stats.scheduled >= 8
-                    ? "high"
-                    : "medium",
-
-            score:
-                6 +
-                (100 -
-                    stats.completionRate) /
-                25,
-        };
-    }
-
-    return null;
 }
 
-function detectHabitRelationships(
-    habits,
-    completions
-) {
-    const patterns = [];
+function detectHabitRelationships(profile) {
+    const patterns = []
+    const habits = profile.habits
 
-    if (habits.length < 2) {
-        return patterns;
-    }
+    for (const target of habits) {
+        for (const trigger of habits) {
+            if (target.id === trigger.id) continue
 
-    const completionMap = {};
+            const comparison = compareHabitConditions(
+                target.rows,
+                trigger.rows
+            )
 
-    for (const habit of habits) {
-        completionMap[habit.id] = new Set();
-    }
+            if (!comparison) continue
 
-    for (const completion of completions) {
-        if (
-            completionMap[completion.habit_id]
-        ) {
-            completionMap[
-                completion.habit_id
-            ].add(
-                normalizeDate(
-                    completion.completed_on
-                )
-            );
-        }
-    }
-
-    for (let i = 0; i < habits.length; i++) {
-        for (
-            let j = 0;
-            j < habits.length;
-            j++
-        ) {
-            if (i === j) {
-                continue;
-            }
-
-            const targetHabit = habits[i];
-            const relatedHabit = habits[j];
-
-            const targetDates =
-                completionMap[targetHabit.id];
-
-            const relatedDates =
-                completionMap[relatedHabit.id];
+            const {
+                targetWhenTriggerDone,
+                targetWhenTriggerMissed,
+                difference,
+                triggerDoneObservations,
+                triggerMissedObservations,
+            } = comparison
 
             if (
-                !targetDates ||
-                !relatedDates ||
-                relatedDates.size < 4
+                triggerDoneObservations < MIN_RELATIONSHIP_OBSERVATIONS / 2 ||
+                triggerMissedObservations < MIN_RELATIONSHIP_OBSERVATIONS / 2 ||
+                Math.abs(difference) < 25
             ) {
-                continue;
+                continue
             }
 
-            let togetherCount = 0;
-
-            for (const date of relatedDates) {
-                if (targetDates.has(date)) {
-                    togetherCount++;
-                }
-            }
-
-            const relationshipRate =
-                calculateRate(
-                    togetherCount,
-                    relatedDates.size
-                );
-
-            if (
-                relationshipRate < 70 ||
-                togetherCount < 3
-            ) {
-                continue;
-            }
+            const positive = difference > 0
+            const magnitude = Math.abs(difference)
 
             patterns.push({
-                type:
-                    "positive_habit_relationship",
+                type: positive
+                    ? "positive_habit_relationship"
+                    : "negative_habit_relationship",
 
-                habitId:
-                    targetHabit.id,
+                habitId: target.id,
+                habitTitle: target.title,
 
-                habitTitle:
-                    targetHabit.title,
-
-                relatedHabitId:
-                    relatedHabit.id,
-
-                relatedHabitTitle:
-                    relatedHabit.title,
+                relatedHabitId: trigger.id,
+                relatedHabitTitle: trigger.title,
 
                 evidence: {
-                    targetHabit:
-                        targetHabit.title,
-
-                    relatedHabit:
-                        relatedHabit.title,
-
-                    completedTogether:
-                        togetherCount,
-
-                    relatedHabitCompletions:
-                        relatedDates.size,
-
-                    relationshipRate,
+                    targetHabit: target.title,
+                    relatedHabit: trigger.title,
+                    targetCompletionWhenRelatedDone:
+                        targetWhenTriggerDone,
+                    targetCompletionWhenRelatedMissed:
+                        targetWhenTriggerMissed,
+                    differencePoints: magnitude,
+                    relatedDoneObservations:
+                        triggerDoneObservations,
+                    relatedMissedObservations:
+                        triggerMissedObservations,
+                    totalObservations:
+                        triggerDoneObservations +
+                        triggerMissedObservations,
                 },
 
-                recommendation:
-                    `Try pairing ${targetHabit.title} with ${relatedHabit.title} when possible.`,
+                // This is a behavioral association, not causation.
+                confidence: relationshipConfidence(
+                    triggerDoneObservations,
+                    triggerMissedObservations,
+                    magnitude
+                ),
 
-                confidence:
-                    togetherCount >= 6
-                        ? "high"
-                        : "medium",
-
-                score:
-                    5 +
-                    relationshipRate / 25,
-            });
+                evidenceStrength: Math.min(1, magnitude / 60),
+                actionability: 0.95,
+                novelty: 0.95,
+                goalRelevance: 0.85,
+                score: 7 + Math.min(3, magnitude / 20),
+            })
         }
     }
 
-    return patterns;
+    return patterns
 }
 
-function getPeriodStats(
-    habit,
-    completions,
-    startDate,
-    endDate
-) {
-    const scheduledDates =
-        getScheduledDates(
-            habit,
-            startDate,
-            endDate
-        );
+function compareHabitConditions(targetRows, triggerRows) {
+    const targetByDate = new Map(
+        targetRows.map((row) => [row.date, row])
+    )
 
-    const completed =
-        countCompletedDates(
-            completions,
-            scheduledDates
-        );
+    const triggerByDate = new Map(
+        triggerRows.map((row) => [row.date, row])
+    )
+
+    let targetDoneWhenTriggerDone = 0
+    let triggerDoneCount = 0
+
+    let targetDoneWhenTriggerMissed = 0
+    let triggerMissedCount = 0
+
+    for (const [date, triggerRow] of triggerByDate) {
+        const targetRow = targetByDate.get(date)
+
+        // If the target habit was not scheduled that day, it is not evidence.
+        if (!targetRow?.scheduled) continue
+
+        if (triggerRow.completed) {
+            triggerDoneCount++
+            if (targetRow.completed) {
+                targetDoneWhenTriggerDone++
+            }
+        } else {
+            triggerMissedCount++
+            if (targetRow.completed) {
+                targetDoneWhenTriggerMissed++
+            }
+        }
+    }
+
+    if (!triggerDoneCount || !triggerMissedCount) return null
+
+    const rateWhenDone = Math.round(
+        (targetDoneWhenTriggerDone / triggerDoneCount) * 100
+    )
+
+    const rateWhenMissed = Math.round(
+        (targetDoneWhenTriggerMissed / triggerMissedCount) * 100
+    )
 
     return {
-        scheduled:
-            scheduledDates.length,
-
-        completed,
-
-        missed:
-            Math.max(
-                0,
-                scheduledDates.length -
-                completed
-            ),
-
-        completionRate:
-            calculateRate(
-                completed,
-                scheduledDates.length
-            ),
-    };
-}
-
-function getScheduledDates(
-    habit,
-    startDate,
-    endDate
-) {
-    const dates = [];
-
-    const current = new Date(startDate);
-
-    current.setHours(12, 0, 0, 0);
-
-    const end = new Date(endDate);
-
-    end.setHours(12, 0, 0, 0);
-
-    while (current <= end) {
-        const dayIndex =
-            current.getDay();
-
-        if (
-            isHabitScheduledForDay(
-                habit,
-                dayIndex
-            )
-        ) {
-            dates.push(formatDate(current));
-        }
-
-        current.setDate(
-            current.getDate() + 1
-        );
+        targetWhenTriggerDone: rateWhenDone,
+        targetWhenTriggerMissed: rateWhenMissed,
+        difference: rateWhenDone - rateWhenMissed,
+        triggerDoneObservations: triggerDoneCount,
+        triggerMissedObservations: triggerMissedCount,
     }
-
-    return dates;
 }
 
-function getScheduledDatesForDay(
-    habit,
-    startDate,
-    endDate,
-    dayIndex
-) {
-    if (
-        !isHabitScheduledForDay(
-            habit,
-            dayIndex
+function detectTaskLoadRelationships(profile) {
+    const patterns = []
+
+    for (const habit of profile.habits) {
+        const rows = habit.rows.map((row) => {
+            const day = profile.daily.find((d) => d.date === row.date)
+            return {
+                ...row,
+                taskLoad: day?.taskLoad ?? 0,
+            }
+        })
+
+        const low = rows.filter((row) => row.taskLoad <= 3)
+        const medium = rows.filter(
+            (row) => row.taskLoad >= 4 && row.taskLoad <= 6
         )
-    ) {
-        return [];
+        const high = rows.filter((row) => row.taskLoad >= 7)
+
+        if (low.length < 3 || high.length < 3) continue
+
+        const lowRate = percentCompleted(low)
+        const highRate = percentCompleted(high)
+
+        if (lowRate - highRate < 25) continue
+
+        patterns.push({
+            type: "task_load_relationship",
+            habitId: habit.id,
+            habitTitle: habit.title,
+            evidence: {
+                lowTaskLoad: {
+                    range: "0-3 tasks",
+                    completionRate: lowRate,
+                    observations: low.length,
+                },
+                highTaskLoad: {
+                    range: "7+ tasks",
+                    completionRate: highRate,
+                    observations: high.length,
+                },
+                differencePoints: lowRate - highRate,
+            },
+            confidence: relationshipConfidence(
+                low.length,
+                high.length,
+                lowRate - highRate
+            ),
+            evidenceStrength: Math.min(
+                1,
+                (lowRate - highRate) / 60
+            ),
+            actionability: 0.95,
+            novelty: 0.9,
+            goalRelevance: 0.85,
+            score: 7 + Math.min(3, (lowRate - highRate) / 20),
+        })
     }
 
-    const dates = [];
-
-    const current =
-        new Date(startDate);
-
-    current.setHours(12, 0, 0, 0);
-
-    const end =
-        new Date(endDate);
-
-    end.setHours(12, 0, 0, 0);
-
-    while (current <= end) {
-        if (
-            current.getDay() ===
-            dayIndex
-        ) {
-            dates.push(
-                formatDate(current)
-            );
-        }
-
-        current.setDate(
-            current.getDate() + 1
-        );
-    }
-
-    return dates;
+    return patterns
 }
 
-function isHabitScheduledForDay(
-    habit,
-    dayIndex
-) {
-    if (
-        !habit.target_days ||
-        !Array.isArray(habit.target_days)
-    ) {
-        return true;
-    }
+function relationshipConfidence(a, b, difference) {
+    const observations = a + b
 
-    if (habit.target_days.length === 0) {
-        return true;
-    }
+    let confidence =
+        Math.min(0.95, 0.55 + observations / 100)
 
-    return habit.target_days.includes(
-        dayIndex
-    );
+    confidence += Math.min(0.15, difference / 400)
+
+    return Number(confidence.toFixed(2))
 }
 
-function countCompletedDates(
-    completions,
-    scheduledDates
-) {
-    const scheduledSet =
-        new Set(scheduledDates);
-
-    const completedSet =
-        new Set();
-
-    for (const completion of completions) {
-        const date =
-            normalizeDate(
-                completion.completed_on
-            );
-
-        if (scheduledSet.has(date)) {
-            completedSet.add(date);
-        }
-    }
-
-    return completedSet.size;
+function confidenceFromObservations(observations) {
+    return Number(
+        Math.min(
+            0.92,
+            0.55 + observations / 80
+        ).toFixed(2)
+    )
 }
 
-function calculateRate(
-    completed,
-    scheduled
-) {
-    if (!scheduled) {
-        return 0;
-    }
+function percentCompleted(rows) {
+    if (!rows.length) return 0
 
     return Math.round(
-        (completed / scheduled) * 100
-    );
+        (rows.filter((row) => row.completed).length / rows.length) * 100
+    )
 }
 
-function normalizeDate(value) {
-    if (!value) {
-        return "";
-    }
+function dedupePatterns(patterns) {
+    const seen = new Set()
 
-    if (
-        typeof value === "string" &&
-        value.length >= 10
-    ) {
-        return value.slice(0, 10);
-    }
-
-    return formatDate(
-        new Date(value)
-    );
-}
-
-function formatDate(date) {
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-function removeDuplicatePatterns(
-    patterns
-) {
-    const seen = new Set();
-
-    const uniquePatterns = [];
-
-    for (const pattern of patterns) {
+    return patterns.filter((pattern) => {
         const key = [
             pattern.type,
             pattern.habitId || "",
             pattern.relatedHabitId || "",
-        ].join("-");
+        ].join(":")
 
-        if (!seen.has(key)) {
-            seen.add(key);
-            uniquePatterns.push(pattern);
-        }
-    }
+        if (seen.has(key)) return false
 
-    return uniquePatterns;
+        seen.add(key)
+        return true
+    })
 }

@@ -9,8 +9,16 @@ export function useInsights() {
     const fetchInsight = useCallback(async () => {
         try {
             setError(null)
-            const res = await fetch("/api/ai/weeklyInsight")
-            if (!res.ok) throw new Error("Failed to load insights")
+
+            const res = await fetch(
+                "/api/ai/weeklyInsight",
+                { cache: "no-store" }
+            )
+
+            if (!res.ok) {
+                throw new Error("Failed to load insights")
+            }
+
             const data = await res.json()
             setInsight(data)
         } catch (err) {
@@ -22,10 +30,24 @@ export function useInsights() {
 
     const regenerate = useCallback(async () => {
         setRefreshing(true)
+
         try {
             setError(null)
-            const res = await fetch("/api/insights", { method: "POST" })
-            if (!res.ok) throw new Error("Failed to regenerate insights")
+
+            const res = await fetch(
+                "/api/ai/weeklyInsight",
+                {
+                    method: "POST",
+                    cache: "no-store",
+                }
+            )
+
+            if (!res.ok) {
+                throw new Error(
+                    "Failed to regenerate insights"
+                )
+            }
+
             const data = await res.json()
             setInsight(data)
         } catch (err) {
@@ -39,5 +61,12 @@ export function useInsights() {
         fetchInsight()
     }, [fetchInsight])
 
-    return { insight, loading, refreshing, error, regenerate }
+    return {
+        insight,
+        loading,
+        refreshing,
+        error,
+        regenerate,
+        refetch: fetchInsight,
+    }
 }
