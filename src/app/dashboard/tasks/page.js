@@ -1,12 +1,11 @@
 'use client'
-
 import { useState, useEffect } from "react"
 import TaskModal from "@/components/common/modals/TaskModal"
 import TaskCard from "./TaskCard"
 import { useAllTasks } from "@/hooks/useAllTasks"
 import ButtonWithIcon from "@/components/common/buttons/ButtonWithIcon"
 import EmptyTasksState from "@/components/emptyStates/EmptyStateUI"
-import Loading from "../Loading"
+import Loading from "@/components/common/loader/Loading"
 
 
 function SectionHeader({ label, count }) {

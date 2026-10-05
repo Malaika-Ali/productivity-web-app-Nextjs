@@ -5,7 +5,8 @@ import { HabitCard } from "@/components/common/cards/HabitCard"
 import HabitModal from "@/components/common/modals/HabitModal"
 import HeatMap from "@/components/heatMap/HeatMap"
 import EmptyTasksState from "@/components/emptyStates/EmptyStateUI"
-import Loading from "../Loading"
+import Loading from "@/components/common/loader/Loading"
+
 
 const filters = ["All", "health", "learning", "mindfulness", "productivity", "lifestyle"]
 

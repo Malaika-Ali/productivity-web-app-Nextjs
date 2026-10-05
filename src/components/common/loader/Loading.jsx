@@ -1,4 +1,4 @@
-import HabitreaLoader from "../../components/common/loader/HabitreaLoader";
+import HabitreaLoader from "./HabitreaLoader";
 
 export default function Loading() {
     return (
