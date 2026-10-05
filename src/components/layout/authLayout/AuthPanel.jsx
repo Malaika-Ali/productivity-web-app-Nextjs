@@ -5,7 +5,7 @@ import FeatureList from "./FeatureList";
 export default function AuthPanel() {
     return (
         <aside
-            className="hidden lg:flex w-[520px]  flex-col shrink-0 min-h-screen relative overflow-hidden bg-purple-700"
+            className="auth-left-panel w-[520px]  flex-col shrink-0 min-h-screen relative overflow-hidden bg-purple-700"
         // style={{
         //     background: "linear-gradient(150deg, #6254d4 0%, #6b47d6 35%, #7c3aed 100%)",
         // }}
