@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 //     title: "Authentication",
 // };
 
-export default function AuthLayout({ children }) {
+export default function layout({ children }) {
     return (
         <div className="min-h-screen flex">
             <aside>
