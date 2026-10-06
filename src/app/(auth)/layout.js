@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 export default function AuthLayout({ children }) {
     return (
         <div className="min-h-screen flex">
-            <aside className="auth-left-panel">
+            <aside>
                 <AuthPanel />
             </aside>
             <main className="flex-1 flex flex-col min-h-screen bg-white">
