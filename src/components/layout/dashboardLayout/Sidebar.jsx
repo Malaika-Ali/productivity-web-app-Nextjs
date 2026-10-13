@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from "@/lib/utils";
-import { Flame, CalendarDays, Goal, ListChecks, ChartColumn, Sparkles } from 'lucide-react';
+import { Flame, CalendarDays, Goal, ListChecks, ChartColumn, Sparkles, LogOut } from 'lucide-react';
+import { logout } from "@/app/actions/logout";
 
 const navItems = [
     { label: "Today", icon: CalendarDays, href: '/dashboard/today' },
@@ -19,6 +20,7 @@ export default function Sidebar() {
     const [streak, setStreak] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
     const [name, setName] = useState("")
+    const [showoptions, setShowOptions] = useState(false)
 
     async function fetchCurrentStreak() {
         try {
@@ -133,11 +135,28 @@ export default function Sidebar() {
                     </div>
                 </div>
                 {/* Ellipsis menu */}
-                <button className="flex flex-col items-center justify-center gap-0.75 p-1 rounded-md hover:bg-gray-100 transition-colors">
+                <button 
+                onClick={(prev)=>setShowOptions(!showoptions)} className="flex flex-col items-center justify-center gap-0.75 p-1 rounded-md hover:bg-gray-100 transition-colors 
+                relative cursor-pointer">
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
                 </button>
+                {
+                    showoptions &&
+                    (
+                        <form 
+                        action={logout}
+                        >
+                        <button
+                        className="absolute flex justify-between items-center gap-1 bottom-15 right-0 bg-gray-100 border-2 border-gray-300 rounded-sm py-1 px-2 cursor-pointer">
+                            {/* <IoMdLogOut /> */}
+                            <LogOut size={12} color="#4a5565" />
+                            <p className="text-xs text-gray-600">LogOut</p>
+                        </button>
+                        </form>
+                    )
+                }
             </div>
         </div>
     );

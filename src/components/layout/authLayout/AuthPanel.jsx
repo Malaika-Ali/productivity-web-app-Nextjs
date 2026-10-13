@@ -19,10 +19,10 @@ export default function AuthPanel() {
                 }}
             />
             {/* Decorative soft circle bottom-right */}
-            <div
+            {/* <div
                 className="absolute -bottom-32 -right-24 w-80 h-80 rounded-full pointer-events-none"
                 style={{ background: "rgba(0,0,0,0.10)" }}
-            />
+            /> */}
 
             <div className="relative z-10 flex flex-col h-full px-12 py-10">
 
