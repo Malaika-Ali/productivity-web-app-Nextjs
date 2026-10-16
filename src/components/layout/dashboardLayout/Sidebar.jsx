@@ -135,9 +135,10 @@ export default function Sidebar() {
                     </div>
                 </div>
                 {/* Ellipsis menu */}
+                <div className="relative">
                 <button 
                 onClick={(prev)=>setShowOptions(!showoptions)} className="flex flex-col items-center justify-center gap-0.75 p-1 rounded-md hover:bg-gray-100 transition-colors 
-                relative cursor-pointer">
+                 cursor-pointer">
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
                     <span className="h-0.75 w-0.75 rounded-full bg-gray-400" />
@@ -149,7 +150,7 @@ export default function Sidebar() {
                         action={logout}
                         >
                         <button
-                        className="absolute flex justify-between items-center gap-1 bottom-15 right-0 bg-gray-100 border-2 border-gray-300 rounded-sm py-1 px-2 cursor-pointer">
+                        className="absolute flex justify-between items-center gap-1 bottom-8 right-0 bg-gray-100 border-2 border-gray-300 rounded-sm py-1 px-2 cursor-pointer">
                             {/* <IoMdLogOut /> */}
                             <LogOut size={12} color="#4a5565" />
                             <p className="text-xs text-gray-600">LogOut</p>
@@ -157,6 +158,7 @@ export default function Sidebar() {
                         </form>
                     )
                 }
+                </div>
             </div>
         </div>
     );

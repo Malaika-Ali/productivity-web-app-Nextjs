@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Habitrea AI
 
-## Getting Started
+A habit and task tracker that doesn't just show you a streak number. It watches how you actually behave over time and gives you specific, data-backed coaching once a week.
 
-First, run the development server:
+## Features
+- **AI coaching.** Habit suggestions during onboarding and a short weekly insight based on your own data.
+- **Instant-feeling UI.** Optimistic updates with rollback if the server disagrees.
+- **Habits with real schedules.** Daily, weekdays, weekends each with a category and preferred time.
+- **Streaks that are actually correct.** Computed from real completion history and each habit's schedule, with a GitHub-style heatmap of the last six months.
+- **Tasks in three clear lists.** Overdue, upcoming, and completed, each paginated on its own.
+- **Daily dashboard.** Today's plan, a circular progress indicator, and your latest AI insight in one view.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [Next.js](https://nextjs.org/) (App Router) and React
+- [Supabase](https://supabase.com/) for authentication and data
+- [Google Gemini](https://ai.google.dev/) for habit suggestions and coaching insights
+- Tailwind CSS
+- Shadcn UI
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Getting started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Requirements
 
-## Learn More
+- Node.js 20.9 or later
+- npm
+- A Supabase project
+- A Gemini API key for AI features
 
-To learn more about Next.js, take a look at the following resources:
+### Install and configure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository and install dependencies:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/Malaika-Ali/productivity-web-app-Nextjs.git
+   npm install
+   ```
 
-## Deploy on Vercel
+2. Create `.env.local` in the project root:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   GEMINI_API_KEY=
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Get the Supabase URL and anon key from your project's API settings, and create a Gemini API key in Google AI Studio. Keep `.env.local` private and never commit real keys.
+
+3. Set up Supabase authentication and the database tables used by the app: `profiles`, `habits`, `habit_completions`, `tasks`, and `ai_insights`. Configure row-level security so users can only access their own data. The repository does not currently include database migrations or a schema, so these need to be created in your Supabase project. Google sign-in is optional; enable the Google provider in Supabase if you want to use it.
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000).
+
+## Available scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
+
+## Roadmap
+ 
+- Backfill `completed_at` on tasks for more precise time-of-day insights
+- Category-level analytics over a full month, not just the current week
+- Push notifications tied to each habit's preferred time
+
+## About
+ 
+Built by [Malaika](https://github.com/Malaika-Ali), a Computer Systems Engineering graduate who teaches web development and builds full-stack projects. If you want to talk about any of the decisions above, I'd like to hear from you.
+
+## Contributing
+
+Contributions are welcome. For a substantial change, open an issue first to discuss the approach. For a pull request, include a clear description of the change and run `npm run build` before submitting.

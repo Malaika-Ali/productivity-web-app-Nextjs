@@ -53,6 +53,9 @@
   --amber-color: #F59E0B;
 }
 
+*{
+  scroll-behavior: smooth;
+}
 :root {
   --amber-color: #F59E0B;
   --background: oklch(1 0 0);
