@@ -2,6 +2,8 @@
 
 A habit and task tracker that doesn't just show you a streak number. It watches how you actually behave over time and gives you specific, data-backed coaching once a week.
 
+![Dashboard's view](public/images/dashboard-full-view.png)
+
 ## Features
 - **AI coaching.** Habit suggestions during onboarding and a short weekly insight based on your own data.
 - **Instant-feeling UI.** Optimistic updates with rollback if the server disagrees.
