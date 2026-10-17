@@ -1,56 +1,21 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Check,
-  Flame,
-  Play,
-  Target,
-  Brain,
-  Zap,
-  Star,
-  MoreHorizontal,
-} from "lucide-react";
+import { ArrowRight, Play, Star, } from "lucide-react";
 import Footer from "./(marketing)/Footer";
-import Logo from "./(marketing)/Logo";
 import Image from 'next/image';
 import dashboard from './dashboard.png'
 import Steps from "./(marketing)/Steps";
 import Pricing from "./(marketing)/Pricing";
 import CTASection from "./(marketing)/CTASection";
 import Features from "./(marketing)/Features";
-
-function SectionLabel({ children }) {
-  return (
-    <p className="mb-3 text-center text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-600">
-      {children}
-    </p>
-  );
-}
+import Nav from "./(marketing)/Nav";
+import Demo from "./(marketing)/Demo";
 
 export default function MarketingPage() {
   return (
     <main className="min-h-screen overflow-hidden bg-white text-slate-900">
 
       {/* Navigation */}
-      <header className="border-b border-slate-100 bg-white">
-        <nav className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
-          <Logo />
-          <div className="hidden items-center gap-8 md:flex">
-            <a href="#features" className="text-sm font-semibold text-slate-600 transition hover:text-violet-600">Features</a>
-            <a href="#how-it-works" className="text-sm font-semibold text-slate-600 transition hover:text-violet-600">How it works</a>
-            <a href="#pricing" className="text-sm font-semibold text-slate-600 transition hover:text-violet-600">Pricing</a>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="hidden text-sm font-semibold text-slate-600 hover:text-violet-600 sm:inline-flex">
-              Sign in
-            </Link>
-            <Link href="/signup"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 px-4 py-2.5 text-xs font-bold text-white shadow-[0_3px_0_#5b21b6] transition hover:-translate-y-0.5 hover:bg-purple-700">
-              Free  Sign up <ArrowRight className="size-3.5" />
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <Nav />
 
       {/* Hero */}
       <section className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:px-10 lg:py-15">
@@ -75,7 +40,7 @@ export default function MarketingPage() {
             <Link href="/signup" className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-3.5 text-xs font-extrabold text-white shadow-[0_4px_0_#5b21b6] transition hover:-translate-y-0.5 hover:bg-purple-700">
               Get started for free <ArrowRight className="size-4" />
             </Link>
-            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 text-xs font-bold text-slate-800 transition hover:border-violet-200 hover:bg-violet-50">
+            <a href="#demo" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 text-xs font-bold text-slate-800 transition hover:border-violet-200 hover:bg-violet-50">
               <span className="flex size-5 items-center justify-center rounded-full bg-amber-500 text-white"><Play className="ml-0.5 size-2.5 fill-current" /></span>
               Watch demo
             </a>
@@ -103,8 +68,11 @@ export default function MarketingPage() {
         </div>
       </section>
 
+      {/* Video Demo */}
+      <Demo/>
+
       {/* Features */}
- <Features/>
+      <Features />
 
       {/* How it works */}
       <Steps />
