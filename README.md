@@ -1,10 +1,50 @@
 # Habitrea AI
 
-Habitrea AI is a full-stack productivity app that combines habit tracking, task management, and AI-generated insights in one experience. Instead of only counting streaks, it analyzes your activity over time and generates weekly coaching based on your own completion patterns.
+Habitrea AI is a full-stack productivity web app that combines habit tracking, task management, and AI-generated insights in one experience. Instead of only counting streaks, it analyzes your activity over time and generates weekly coaching based on your own completion patterns.
 
-![Dashboard's view](public/images/dashboard-full-view.png)
+## Preview
+
+<p align="center">
+  <img src="public/videos/demo-gif.gif" alt="Habitrea AI product demo showing the dashboard, habit tracking, task management, and AI insights" width="900" />
+</p>
+
+<p align="center">
+  <em>Build habits, finish tasks, and discover patterns in your progress.</em>
+</p>
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Dashboard</strong></td>
+    <td align="center"><strong>Habit Tracking</strong></td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="public/images/dashboard-full-view.png" alt="Habitrea AI dashboard" width="100%" />
+    </td>
+    <td width="50%">
+      <img src="public/images/habits-page.png" alt="Habitrea AI habits page" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Task Management</strong></td>
+    <td align="center"><strong>AI-Powered Coaching</strong></td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="public/images/tasks-page.png" alt="Habitrea AI tasks page" width="100%" />
+    </td>
+    <td width="50%">
+      <!-- Replace this image with an actual AI insights screenshot when available. -->
+      <img src="public/images/dashboard-full-view.png" alt="Habitrea AI dashboard with progress and insights" width="100%" />
+    </td>
+  </tr>
+</table>
+
+<!-- ![Dashboard's view](public/images/dashboard-full-view.png)
 ![Habits Page](public/images/habits-page.png)
-![Tasks Page](public/images/tasks-page.png)
+![Tasks Page](public/images/tasks-page.png) -->
 
 ## Features
 - **AI coaching.** Habit suggestions during onboarding and a short weekly insight based on your own data.
