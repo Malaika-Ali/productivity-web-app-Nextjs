@@ -1,6 +1,6 @@
 # Habitrea AI
 
-A habit and task tracker that doesn't just show you a streak number. It watches how you actually behave over time and gives you specific, data-backed coaching once a week.
+Habitrea AI is a full-stack productivity app that combines habit tracking, task management, and AI-generated insights in one experience. Instead of only counting streaks, it analyzes your activity over time and generates weekly coaching based on your own completion patterns.
 
 ![Dashboard's view](public/images/dashboard-full-view.png)
 ![Habits Page](public/images/habits-page.png)

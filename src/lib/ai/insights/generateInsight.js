@@ -1,5 +1,107 @@
-const GEMINI_URL =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+const PRIMARY_MODEL = "gemini-3.8-flash"
+const FALLBACK_MODEL = "gemini-3.6-flash"
+const GEMINI_API_URL =
+    "https://generativelanguage.googleapis.com/v1beta/models"
+
+
+const sleep = (ms) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
+
+const RETRYABLE_STATUSES = new Set([
+    408, 429, 500, 502, 503, 504,
+])
+
+async function fetchGeminiWithFallback(apiKey, requestBody) {
+    async function requestModel(model, maxRetries) {
+        const url =
+            `${GEMINI_API_URL}/${model}:generateContent` +
+            `?key=${apiKey}`
+
+        for (let attempt = 0; ; attempt++) {
+            let response
+
+            try {
+                response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                })
+            } catch (error) {
+                // Network failures can also be temporary.
+                if (attempt >= maxRetries) {
+                    throw error
+                }
+
+                const delay = 1000 * 2 ** attempt
+
+                console.warn(
+                    `${model}: network failure. ` +
+                    `Retrying in ${delay}ms.`
+                )
+
+                await sleep(delay)
+                continue
+            }
+
+            if (response.ok) {
+                console.log(`Gemini model succeeded: ${model}`)
+                return response
+            }
+
+            const shouldRetry =
+                RETRYABLE_STATUSES.has(response.status)
+
+            if (!shouldRetry || attempt >= maxRetries) {
+                console.warn(
+                    `${model} failed with HTTP ${response.status}`
+                )
+                return response
+            }
+
+            const delay =
+                1000 * 2 ** attempt +
+                Math.floor(Math.random() * 500)
+
+            console.warn(
+                `${model} returned ${response.status}. ` +
+                `Retry ${attempt + 1}/${maxRetries} ` +
+                `in ${delay}ms.`
+            )
+
+            await response.body?.cancel()
+            await sleep(delay)
+        }
+    }
+
+    // Initial request + two retries.
+    const primaryResponse = await requestModel(
+        PRIMARY_MODEL,
+        2
+    )
+
+    if (primaryResponse.ok) {
+        return primaryResponse
+    }
+
+    // Only switch models for temporary service failures.
+    if (!RETRYABLE_STATUSES.has(primaryResponse.status)) {
+        return primaryResponse
+    }
+
+    const primaryError = await primaryResponse.text()
+
+    console.warn(
+        `Primary model exhausted retries. ` +
+        `Switching to ${FALLBACK_MODEL}.`,
+        primaryError
+    )
+
+    // One fallback attempt.
+    return requestModel(FALLBACK_MODEL, 0)
+}
+
 
 const RESPONSE_SCHEMA = {
     type: "OBJECT",
@@ -71,28 +173,25 @@ export async function generateInsight(patterns) {
 
     const prompt = buildPrompt(patterns)
 
-    const response = await fetch(
-        `${GEMINI_URL}?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
+    const requestBody = {
+        contents: [
+            {
+                parts: [{ text: prompt }],
             },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        parts: [{ text: prompt }],
-                    },
-                ],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: RESPONSE_SCHEMA,
-                    temperature: 0.45,
-                    maxOutputTokens: 1200,
-                },
-            }),
-        }
+        ],
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: RESPONSE_SCHEMA,
+            temperature: 0.45,
+            maxOutputTokens: 2048,
+        },
+    }
+
+    const response = await fetchGeminiWithFallback(
+        apiKey,
+        requestBody
     )
+
 
     if (!response.ok) {
         const errorText = await response.text()
@@ -102,6 +201,9 @@ export async function generateInsight(patterns) {
     }
 
     const data = await response.json()
+    console.log("data is HEREEEEEE*****", data
+
+    )
     const rawText =
         data?.candidates?.[0]?.content?.parts?.[0]?.text
 
