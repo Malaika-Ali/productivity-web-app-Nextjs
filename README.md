@@ -36,15 +36,10 @@ Habitrea AI is a full-stack productivity web app that combines habit tracking, t
       <img src="public/images/tasks-page.png" alt="Habitrea AI tasks page" width="100%" />
     </td>
     <td width="50%">
-      <!-- Replace this image with an actual AI insights screenshot when available. -->
-      <img src="public/images/dashboard-full-view.png" alt="Habitrea AI dashboard with progress and insights" width="100%" />
+      <img src="public/images/AI-coach.png" alt="Habitrea AI coach note" width="100%" />
     </td>
   </tr>
 </table>
-
-<!-- ![Dashboard's view](public/images/dashboard-full-view.png)
-![Habits Page](public/images/habits-page.png)
-![Tasks Page](public/images/tasks-page.png) -->
 
 ## Features
 - **AI coaching.** Habit suggestions during onboarding and a short weekly insight based on your own data.
@@ -110,13 +105,13 @@ Habitrea AI is a full-stack productivity web app that combines habit tracking, t
 
 ## Roadmap
  
-- Backfill `completed_at` on tasks for more precise time-of-day insights
+- Include `completed_at` on tasks for more precise time-of-day insights
 - Category-level analytics over a full month, not just the current week
 - Push notifications tied to each habit's preferred time
 
 ## About
  
-Built by [Malaika](https://github.com/Malaika-Ali), a Computer Systems Engineering graduate who teaches web development and builds full-stack projects. If you want to talk about any of the decisions above, I'd like to hear from you.
+Built by [Malaika Ali](https://github.com/Malaika-Ali), a Software Engineer specializing in React, Next.js, and full-stack web development. Habitrea AI combines modern frontend engineering with AI-powered features to create a practical productivity experience.
 
 ## Contributing
 
