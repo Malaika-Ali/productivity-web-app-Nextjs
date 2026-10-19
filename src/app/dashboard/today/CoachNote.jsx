@@ -51,20 +51,8 @@ export default function CoachNote() {
                     <p className="text-sm leading-relaxed text-purple-100 z-100 mb-5">
                         {insight.insight}
                         {insight.recommendation}
-                        {/* You have kept the morning run for 12 days, that's great. I noticed reading slips after 9 PM, so try to move it to 10 AM. */}
                     </p>
-{/* suggestions */}
-                    {/* <div className="flex flex-col gap-2.5">
-                        {insight.suggestions.map((suggestion, i) => (
-                            <div
-                                key={i}
-                                className="flex items-start gap-2.5 bg-gray-50/60 rounded-xl px-3.5 py-3"
-                            >
-                                <Lightbulb size={14} className="text-primary mt-0.5 shrink-0" />
-                                <p className="text-sm text-gray-600 font-normal">{suggestion}</p>
-                            </div>
-                        ))}
-                    </div> */}
+
                 </div>
             )}
         </div>

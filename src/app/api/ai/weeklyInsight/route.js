@@ -5,6 +5,7 @@ import { detectPatterns } from "@/lib/ai/insights/PatternDetection"
 import { selectInsights } from "@/lib/ai/insights/InsightSelection"
 import { generateInsight } from "@/lib/ai/insights/generateInsight"
 import { getCurrentWeekStart } from "@/lib/ai/insights/weekwindow"
+import { checkInsightEligibility } from "@/lib/ai/insights/CheckInsightEligibility"
 
 export const dynamic = "force-dynamic"
 
@@ -31,12 +32,35 @@ async function createWeeklyInsight(supabase, userId) {
         userId
     )
 
-    const rawData = await collectBehavioralData(
-        supabase,
-        userId
-    )
+    const rawData = await collectBehavioralData(supabase,userId)
 
-    if (!rawData.habits.length) {
+    const { data: completions, error } = await supabase
+        .from('habit_completions')
+        .select('completed_on')
+        .eq("user_id", userId)
+        .order('completed_on', { ascending: true })
+
+    if (error) throw error
+
+    const firstActivityAt =
+        completions?.[0]?.completed_on ?? null
+
+    const totalActivityDays = [
+        ...new Set(
+            (completions ?? [])
+                .map((item) => item.completed_on)
+                .filter(Boolean)
+                .map((date) => date.split("T")[0])
+        ),
+    ].length
+
+    const isEligibleForInsights = checkInsightEligibility({
+        firstActivityAt,
+        activeDays:totalActivityDays,
+    })
+
+
+    if (!isEligibleForInsights.eligible) {
         return {
             insight:
                 "Add a few habits and log them for a little while so Habitrea can learn how your routines behave.",

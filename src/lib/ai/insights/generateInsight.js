@@ -1,3 +1,5 @@
+import { checkInsightEligibility } from "./CheckInsightEligibility"
+
 const PRIMARY_MODEL = "gemini-3.8-flash"
 const FALLBACK_MODEL = "gemini-3.6-flash"
 const GEMINI_API_URL =
@@ -75,7 +77,7 @@ async function fetchGeminiWithFallback(apiKey, requestBody) {
         }
     }
 
-    // Initial request + two retries.
+    // Initial request + two retries
     const primaryResponse = await requestModel(
         PRIMARY_MODEL,
         2
@@ -85,7 +87,7 @@ async function fetchGeminiWithFallback(apiKey, requestBody) {
         return primaryResponse
     }
 
-    // Only switch models for temporary service failures.
+    //  switch models for temporary service failures
     if (!RETRYABLE_STATUSES.has(primaryResponse.status)) {
         return primaryResponse
     }
@@ -98,7 +100,7 @@ async function fetchGeminiWithFallback(apiKey, requestBody) {
         primaryError
     )
 
-    // One fallback attempt.
+    // One fallback attempt
     return requestModel(FALLBACK_MODEL, 0)
 }
 
@@ -148,6 +150,24 @@ const RESPONSE_SCHEMA = {
 }
 
 export async function generateInsight(patterns) {
+
+    // const userActivityRes=await fetch("/api/ai/activityStatus")
+    // if (!userActivityRes.ok) {
+    //     throw new Error("Failed to load insights")
+    // }
+    // const userActivity=await userActivityRes.json()
+    // console.log(userActivity)
+    // const isEligibleForInsights = checkInsightEligibility({
+    //     firstActivityAt: userActivity.firstActivityAt,
+    //     activeDays: userActivity.activeDays,
+    // })
+    // if (!eligibility.eligible){
+    //     return {
+    //         eligible: false,
+    //         insight: null,
+    //         reason: eligibility.reason,
+    //     }
+    // }
     if (!patterns?.length) {
         return {
             insight:
@@ -201,9 +221,7 @@ export async function generateInsight(patterns) {
     }
 
     const data = await response.json()
-    console.log("data is HEREEEEEE*****", data
-
-    )
+  
     const rawText =
         data?.candidates?.[0]?.content?.parts?.[0]?.text
 
