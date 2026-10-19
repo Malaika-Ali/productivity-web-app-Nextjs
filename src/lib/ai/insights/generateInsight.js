@@ -1,5 +1,3 @@
-import { checkInsightEligibility } from "./CheckInsightEligibility"
-
 const PRIMARY_MODEL = "gemini-3.8-flash"
 const FALLBACK_MODEL = "gemini-3.6-flash"
 const GEMINI_API_URL =
@@ -150,24 +148,6 @@ const RESPONSE_SCHEMA = {
 }
 
 export async function generateInsight(patterns) {
-
-    // const userActivityRes=await fetch("/api/ai/activityStatus")
-    // if (!userActivityRes.ok) {
-    //     throw new Error("Failed to load insights")
-    // }
-    // const userActivity=await userActivityRes.json()
-    // console.log(userActivity)
-    // const isEligibleForInsights = checkInsightEligibility({
-    //     firstActivityAt: userActivity.firstActivityAt,
-    //     activeDays: userActivity.activeDays,
-    // })
-    // if (!eligibility.eligible){
-    //     return {
-    //         eligible: false,
-    //         insight: null,
-    //         reason: eligibility.reason,
-    //     }
-    // }
     if (!patterns?.length) {
         return {
             insight:

@@ -133,7 +133,8 @@ export default function TaskModal({ task = null, onClose, mode = "edit", onTaskU
 
             const data = await res.json()
             if (!res.ok) console.error(data.error)
-            // onTaskUpdated()
+            // here the event listener is acivated for updating the tasks list from inside the useAllTasks hook
+            window.dispatchEvent(new Event("tasks-updated"))
             onClose()
         } catch (err) {
             console.error("Failed to save task", err)

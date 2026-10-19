@@ -2,11 +2,6 @@ import { useState, useEffect, useCallback } from "react"
 
 const PAGE_SIZE = 10
 
-// category: "completed" | "overdue" | "pending" | "all"
-// Called once per category as three independent instances on the Tasks page —
-// each keeps its own offset/hasMore, so "See More" on one section never
-// affects the others. This is intentional, not a workaround: React hooks are
-// just function calls that create fresh, isolated state per call.
 export function useAllTasks(category = "all") {
     const [tasks, setTasks] = useState([])
     const [offset, setOffset] = useState(0)
@@ -39,6 +34,26 @@ export function useAllTasks(category = "all") {
         if (!hasMore || loadingMore) return
         fetchPage(offset, false)
     }
+
+
+    useEffect(() => {
+        function handleTasksUpdated() {
+            setOffset(0)
+            fetchPage(0, true)
+        }
+
+        window.addEventListener(
+            "tasks-updated",
+            handleTasksUpdated
+        )
+
+        return () => {
+            window.removeEventListener(
+                "tasks-updated",
+                handleTasksUpdated
+            )
+        }
+    }, [fetchPage])
 
     async function toggleTask(taskId, isCurrentlyCompleted) {
         const newStatus = isCurrentlyCompleted ? "todo" : "completed"
