@@ -23,4 +23,8 @@ export const navbarConfig = {
         actionEvent: "open-add-task",
         btnId: "add-task-trigger"
     },
+    "/dashboard/coach": {
+        title: "My AI Coach",
+        showSearch: false,
+    },
 };
